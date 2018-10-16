@@ -11,10 +11,3 @@ logs/
 *.lock
 *.js
 !.autod.conf.js
-
-app/**/*.js
-test/**/*.js
-config/**/*.js
-app/**/*.map
-test/**/*.map
-config/**/*.map
