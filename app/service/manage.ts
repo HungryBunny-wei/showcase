@@ -64,6 +64,22 @@ export default class ManageService extends Service {
     return userCardPackage;
   }
 
+  public async providerAdd(provider: ServiceProvider): Promise<ServiceProvider> {
+    const user = await this.ctx.service.user.findOne(provider.UserId);
+    await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
+      const providerRepo: Repository<ServiceProvider> = transactionalEntityManager.getRepository(ServiceProvider);
+      const userRepo: Repository<User> = transactionalEntityManager.getRepository(User);
+
+      provider.Status = ServiceProviderStatus.confirm;
+      await providerRepo.save(provider);
+      user.UserType = 'service';
+      user.ServiceProviderId = provider.Id;
+      await userRepo.save(user);
+    });
+
+    return provider;
+  }
+
   public async providerConfirm(id: string): Promise<ServiceProvider> {
     const session = this.ctx.locals.session;
     const localUser = this.ctx.locals.user;
@@ -161,23 +177,16 @@ export default class ManageService extends Service {
   /**
    * 添加为管理员
    */
-  public async userAddManage(user: User): Promise<User> {
+  public async userAddManage(userId: number): Promise<User> {
     const userRepo: Repository<User> = this.ctx.app.typeorm.getRepository(User);
-    const _user = await userRepo.findOne({Phone: user.Phone});
-    if (_user) {
-      // 用户已经是管理员
-      if (_user.Manage === 'manage' || _user.Manage === 'admin') {
-        throw ErrorService.RuntimeError('manage.user.isManage');
-      }
-      _user.Manage = 'manage';
-      await userRepo.save(_user);
-      return _user;
-    } else {
-      user.Manage = 'manage';
-      user.UserType = 'user';
-      await userRepo.save(user);
-      return user;
+    const user = await this.ctx.service.user.findOne(userId);
+    // 用户已经是管理员
+    if (user.Manage === 'manage' || user.Manage === 'admin') {
+      throw ErrorService.RuntimeError('manage.user.isManage');
     }
+    user.Manage = 'manage';
+    await userRepo.save(user);
+    return user;
   }
 
   /**

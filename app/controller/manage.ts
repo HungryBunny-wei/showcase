@@ -1,5 +1,6 @@
 import {Controller} from 'egg';
 import {User} from '../entity/user';
+import {ServiceProvider, ServiceProviderStatus} from '../entity/service-provider';
 
 export default class ManageController extends Controller {
 
@@ -39,6 +40,24 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     };
   }
 
+  public async providerAdd() {
+    const body = this.ctx.request.body;
+    const serviceProvider = new ServiceProvider();
+    serviceProvider.Address = body.Address;
+    // serviceProvider.AddressName = body.AddressName;
+    // serviceProvider.Latitude = body.Latitude;
+    // serviceProvider.Longitude = body.Longitude;
+    serviceProvider.Name = body.Name;
+    serviceProvider.Phone = body.Phone;
+    serviceProvider.UserId = body.UserId;
+    serviceProvider.Status = ServiceProviderStatus.confirm;
+
+    this.ctx.body = {
+      success: true,
+      obj: await this.ctx.service.manage.providerAdd(serviceProvider),
+    };
+  }
+
   public async providerConfirm() {
     const body = this.ctx.request.body;
     this.ctx.body = {
@@ -70,6 +89,20 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     };
   }
 
+  public async userAdd() {
+    const user = new User();
+    user.Password = await this.ctx.service.gen.bcryptPassword(this.ctx.request.body.Password);
+    user.Name = await this.ctx.request.body.Name;
+    user.Phone = this.ctx.request.body.Phone;
+    user.UserType = 'user';
+    user.Manage = 'none';
+    await this.ctx.app.typeorm.getRepository(User).save(user);
+    this.ctx.body = {
+      success: true,
+      obj: user,
+    };
+  }
+
   public async resetPassword() {
     const body = this.ctx.request.body;
     await this.ctx.service.manage.resetPassword(body.UserId, body.Password);
@@ -94,13 +127,9 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
   }
 
   public async userAddManage() {
-    const user = new User();
-    user.Password = await this.ctx.service.gen.bcryptPassword(this.ctx.request.body.Password);
-    user.Name = await this.ctx.request.body.Name;
-    user.Phone = this.ctx.request.body.Phone;
     this.ctx.body = {
       success: true,
-      obj: await this.ctx.service.manage.userAddManage(user),
+      obj: await this.ctx.service.manage.userAddManage(this.ctx.request.body.UserId),
     };
   }
 

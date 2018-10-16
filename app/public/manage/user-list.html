@@ -31,7 +31,7 @@
 </div>
 
 <!-- 表格 -->
-<div id="dateTable"></div>
+<table id="dataTable" lay-filter="dataTable"></table>
 
 <!--新增管理员-->
 <div id="layui-form" style="display: none;">
@@ -79,7 +79,7 @@
       , $ = layui.jquery;
     // 表格渲染
     var tableIns = table.render({
-      elem: '#dateTable'                  //指定原始表格元素选择器（推荐id选择器）
+      elem: '#dataTable'                  //指定原始表格元素选择器（推荐id选择器）
       , height: vipTable.getFullHeight()    //容器高度
       , cols: [[                  //标题栏
         {field: 'Id', title: 'ID', width:80, fixed: 'left'}
@@ -90,7 +90,7 @@
         ,{field: 'NickName', title: '微信昵称', width:120,}
         ,{field: 'LoginTime', title: '最后登录时间', width:170}
         ,{field: 'CreaTime', title: '创建时间', width:170}
-        , { fixed: 'right', title: '操作', width: 100, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
+        , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
       , url: '/api/manage/user'
@@ -112,22 +112,35 @@
       , done: function (res, curr, count) {
         //如果是异步请求数据方式，res即为你接口返回的信息。
         //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-        console.log(res);
-
+        // console.log(res);
+        //
         //得到当前页码
-        console.log(curr);
+        // console.log(curr);
 
         //得到数据总量
-        console.log(count);
+        // console.log(count);
       }
     });
-
-    // 获取选中行
-    table.on('checkbox(dataCheck)', function (obj) {
-      layer.msg('123');
-      console.log(obj.checked); //当前是否选中状态
-      console.log(obj.data); //选中行的相关数据
-      console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+    table.on('tool(dataTable)', function(obj){
+      console.log(obj);
+      switch(obj.event){
+        case 'delete':
+          layer.open({
+            title: '删除管理员',
+            content:'你确认要删除吗?',
+            btn:['确定','取消'],
+            yes: (index, layero) => {
+              window.meiCar.userDelManage(obj.data.Id, () => {
+                layer.close(index);
+                tableIns.reload();
+              });
+            },
+            btn2:(index,layero)=>{
+              layer.close(index);
+            },
+          })
+          break;
+      };
     });
 
     // 刷新
@@ -137,7 +150,7 @@
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
       layer.open({
-        title: '添加管理员账号',
+        title: '添加用户',
         yes: function (index, layero) {
           let data = {
             Password: layero.find('#Password')[0].value,
@@ -147,7 +160,7 @@
           if (!data.Password || !data.Name || !data.Phone) {
             return;
           }
-          window.meiCar.userAddManage(data, () => {
+          window.meiCar.post('/api/manage/user',data,()=>{
             layer.close(index);
             tableIns.reload();
           });
@@ -165,14 +178,12 @@
       // 登录
       return false;
     });
-
-    // you code ...
-
   });
 </script>
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
-    <a class="layui-btn layui-btn-mini layui-btn-normal" lay-event="edit">编辑</a>
+    <div class="layui-btn-container">
+    </div>
 </script>
 </body>
 </html>

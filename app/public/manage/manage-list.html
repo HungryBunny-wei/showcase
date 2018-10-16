@@ -16,18 +16,31 @@
 <!-- 工具集 -->
 <div class="my-btn-box">
     <span class="fl">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">选择用户</label>
+                <div class="layui-input-block">
+                        <select id="UserId" name="UserId" lay-verify="required" lay-search>
+                        </select>
+                    </div>
+            </div>
+            <div class="layui-inline">
         <!--<a class="layui-btn layui-btn-danger radius btn-delect" id="btn-delete-all">批量删除</a>-->
         <a class="layui-btn btn-add btn-default" id="btn-add">添加</a>
-        <!--<a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#x1002;</i></a>-->
+                <!--<a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#x1002;</i></a>-->
         <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#xe669;</i></a>
-    </span>
-<!--    <span class="fr">
-        <span class="layui-form-label">搜索条件：</span>
-        <div class="layui-input-inline">
-            <input type="text" autocomplete="off" placeholder="请输入搜索条件" class="layui-input">
+            </div>
         </div>
-        <button class="layui-btn mgl-20">查询</button>
-    </span>-->
+    </form>
+    </span>
+    <!--    <span class="fr">
+            <span class="layui-form-label">搜索条件：</span>
+            <div class="layui-input-inline">
+                <input type="text" autocomplete="off" placeholder="请输入搜索条件" class="layui-input">
+            </div>
+            <button class="layui-btn mgl-20">查询</button>
+        </span>-->
 </div>
 
 <!-- 表格 -->
@@ -35,33 +48,15 @@
 
 <!--新增管理员-->
 <div id="layui-form" style="display: none;">
-    <form class="layui-form" action="">
-        <div class="layui-form-item">
-            <label class="layui-form-label">名称</label>
-            <div class="layui-input-block">
-                <input id="Name" type="text" name="Name" required autocomplete="off"
-                       placeholder="请输入名称"
-                       class="layui-input">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">手机</label>
-            <div class="layui-input-block">
-                <input id="Phone" type="tel" name="Phone" placeholder="将用来登录账号"
-                       autocomplete="new-password"
-                       class="layui-input" autocapitalize="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">密码</label>
-            <div class="layui-input-block">
-                <input id="Password" type="password" name="Password" required
-                       autocomplete="new-password"
-                       class="layui-input">
-            </div>
-        </div>
-    </form>
+    <!-- <form class="layui-form" action="">
+         <div class="layui-form-item">
+             <label class="layui-form-label">用户</label>
+             <div class="layui-input-block">
+                 <select id="UserId" name="UserId" lay-verify="required" lay-search>
+                 </select>
+             </div>
+         </div>
+     </form>-->
 </div>
 <script type="text/javascript" src="../frame/layui/layui.js"></script>
 <script type="text/javascript" src="../js/index.js"></script>
@@ -71,6 +66,16 @@
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
 
+    window.meiCar.get('/api/manage/user', {}, (result) => {
+      let users = result.obj;
+      let htmls = [`<option value="">请选择或输入搜索</option>`];
+      users.forEach((user) => {
+        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+      });
+      console.log($('#UserId'));
+      $('#UserId')[0].innerHTML = htmls.join();
+      form.render();
+    })
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -82,14 +87,14 @@
       elem: '#dataTable'                  //指定原始表格元素选择器（推荐id选择器）
       , height: vipTable.getFullHeight()    //容器高度
       , cols: [[                  //标题栏
-        {field: 'Id', title: 'ID', width:80, fixed: 'left'}
-        ,{field: 'Phone', title: '手机号', width:120}
-        ,{field: 'Name', title: '用户名', width:120}
-        ,{field: 'Manage', title: '是否是管理员', width:120,}
-        ,{field: 'OpenId', title: 'OpenID', width:120,}
-        ,{field: 'NickName', title: '微信昵称', width:120,}
-        ,{field: 'LoginTime', title: '最后登录时间', width:170}
-        ,{field: 'CreaTime', title: '创建时间', width:170}
+        { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
+        , { field: 'Phone', title: '手机号', width: 120 }
+        , { field: 'Name', title: '用户名', width: 120 }
+        , { field: 'Manage', title: '是否是管理员', width: 120, }
+        , { field: 'OpenId', title: 'OpenID', width: 120, }
+        , { field: 'NickName', title: '微信昵称', width: 120, }
+        , { field: 'LoginTime', title: '最后登录时间', width: 170 }
+        , { field: 'CreaTime', title: '创建时间', width: 170 }
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
@@ -121,26 +126,27 @@
         // console.log(count);
       }
     });
-    table.on('tool(dataTable)', function(obj){
+    table.on('tool(dataTable)', function (obj) {
       console.log(obj);
-      switch(obj.event){
+      switch (obj.event) {
         case 'delete':
           layer.open({
             title: '删除管理员',
-            content:'你确认要删除吗?',
-            btn:['确定','取消'],
+            content: '你确认要删除吗?',
+            btn: ['确定', '取消'],
             yes: (index, layero) => {
               window.meiCar.userDelManage(obj.data.Id, () => {
                 layer.close(index);
                 tableIns.reload();
               });
             },
-            btn2:(index,layero)=>{
+            btn2: (index, layero) => {
               layer.close(index);
             },
           })
           break;
-      };
+      }
+      ;
     });
 
     // 刷新
@@ -149,24 +155,33 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      layer.open({
-        title: '添加管理员账号',
-        yes: function (index, layero) {
-          let data = {
-            Password: layero.find('#Password')[0].value,
-            Name: layero.find('#Name')[0].value,
-            Phone: layero.find('#Phone')[0].value,
-          };
-          if (!data.Password || !data.Name || !data.Phone) {
-            return;
-          }
-          window.meiCar.userAddManage(data, () => {
-            layer.close(index);
-            tableIns.reload();
-          });
-        },
-        content: $("#layui-form").html()
-      })
+      // layer.open({
+      //   title: '添加管理员',
+      //   yes: function (index, layero) {
+      //     let data = {
+      //       UserId: layero.find('#UserId')[0].value,
+      //     };
+      //     if (!data.UserId) {
+      //       return;
+      //     }
+      //     window.meiCar.userAddManage(data, () => {
+      //       layer.close(index);
+      //       tableIns.reload();
+      //     });
+      //   },
+      //   content: $("#layui-form").html()
+      // })
+      //
+      let data = {
+        UserId: $('#UserId')[0].value,
+      };
+      if (!data.UserId) {
+        return;
+      }
+      window.meiCar.userAddManage(data, () => {
+        // layer.close(index);
+        tableIns.reload();
+      });
     });
     // 添加按钮(提交)
     form.on('submit(add)', function (data) {
