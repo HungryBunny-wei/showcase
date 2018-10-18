@@ -7,7 +7,7 @@ export default class ManageController extends Controller {
   public async orderCardIndex() {
     // const repo: Repository<OrderCard> = this.ctx.app.typeorm.getRepository(OrderCard);
     const sql = `
-    select orderCard.*,userCarInfo.Address,userCarInfo.AddressName,user.Name,user.Phone from Order_Card as orderCard
+    select orderCard.*,userCarInfo.Address,userCarInfo.AddressName,user.Name,user.Phone from order_card as orderCard
     left join User_CarInfo as userCarInfo
       on orderCard.UserId = userCarInfo.UserId and userCarInfo.IsNew = 1
     left join User as user

@@ -132,13 +132,14 @@ MeiCar.prototype.get = function (url, body, call, errCall) {
     });
   })
 }
-MeiCar.prototype.cehckLogin = function (call) {
+MeiCar.prototype.checkLogin = function (call) {
   layui.use(['layer'], () => {
     let layer = layui.layer
       , $ = layui.jquery;
     if (window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING)) {
       this.get('/api/user/queryAll', {}, (result) => {
-        window.sessionStorage.setItem('meiyou.userInfo', result.obj);
+        call(result.obj);
+        window.sessionStorage.setItem('meiyou.userInfo', JSON.stringify(result.obj));
       }, () => {
         window.location.href = './login.html';
       })
@@ -146,6 +147,9 @@ MeiCar.prototype.cehckLogin = function (call) {
       window.location.href = './login.html';
     }
   })
+}
+MeiCar.prototype.getUser = function () {
+  return JSON.parse(window.sessionStorage.getItem('meiyou.userInfo'));
 }
 
 window.meiCar = new MeiCar();

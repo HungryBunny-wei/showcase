@@ -121,7 +121,7 @@ where usercard.Type = 0 and ordercardover.ServiceProviderId = ?
       [this.ctx.locals.user.ServiceProviderId]);
     const sumSQl = `
     select sum(ordercard.Price) as sum from User_CardPackage as usercard
-left join Order_Card as ordercard
+left join order_card as ordercard
   on usercard.OrderCardId = ordercard.Id
   WHERE usercard.ServiceProviderId = ?
 GROUP BY usercard.ServiceProviderId
