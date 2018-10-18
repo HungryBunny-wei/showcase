@@ -17,6 +17,7 @@ MeiCar.prototype.login = function (phone, password) {
         Phone: phone,
         Password: password,
       },
+      headers: this.getPostHeader(),
       method: 'POST',
       // contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
       // processData: false, // NEEDED, DON'T OMIT THIS
