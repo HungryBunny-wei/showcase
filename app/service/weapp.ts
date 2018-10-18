@@ -1,12 +1,12 @@
 import {Service} from 'egg';
-import {WeappForm} from '../entity/weapp-form';
 import {Repository} from 'typeorm';
 import {User} from '../entity/user';
-import {MonthCardType, UserCardPackage} from '../entity/user-card-package';
+import {UserCardPackage} from '../entity/user-card-package';
+import {WeappForm} from '../entity/weapp-form';
 import moment = require('moment');
 import {OrderCardOver} from '../entity/order-card-over';
-import {UserCarInfo} from '../entity/user-car-info';
 import {OrderInfo} from '../entity/order-info';
+import {UserCarInfo} from '../entity/user-car-info';
 
 /**
  * 微信服务
@@ -131,7 +131,7 @@ export default class WeappService extends Service {
         template_id: this.config.weappSDK.sendCardEndTime.template_id,
         data: {
           keyword1: {
-            value: card.Type === MonthCardType.vip ? '高级会员月卡' : '单双月会员月卡',
+            value: card.Title,
           },
           keyword2: {
             value: moment(card.EndTime).format('YYYY-MM-DD'),
@@ -158,13 +158,13 @@ export default class WeappService extends Service {
       template_id: this.config.weappSDK.sendCardConfirm.template_id,
       data: {
         keyword1: {
-          value: card.Type === MonthCardType.vip ? '高级会员月卡' : '单双月会员月卡',
+          value: card.Title,
         },
         keyword2: {
           value: moment(card.BuyTime).format('YYYY-MM-DD'),
         },
         keyword3: {
-          value: card.Type === MonthCardType.vip ? '300.00' : '220.00',
+          value: card.Price,
         },
         keyword4: {
           value: this.config.weappSDK.sendCardConfirm.name,

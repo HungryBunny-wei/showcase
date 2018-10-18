@@ -1,12 +1,14 @@
 import {Controller} from 'egg';
-import {UserCardPackage} from '../entity/user-card-package';
+import {Card, CardStatus} from '../entity/card';
 
 export default class CardController extends Controller {
 
+  /**
+   * 查询有效月卡
+   */
   async index() {
-    const userCardPackageRepo  = this.ctx.app.typeorm.getRepository(UserCardPackage);
-    const localUser = this.ctx.locals.user;
-    const cards = await userCardPackageRepo.find({ where: { UserId: localUser.Id } });
+    const cardRepo = this.ctx.app.typeorm.getRepository(Card);
+    const cards = await cardRepo.find({where: {Status: CardStatus.enable}});
     this.ctx.body = {
       success: true,
       obj: cards,

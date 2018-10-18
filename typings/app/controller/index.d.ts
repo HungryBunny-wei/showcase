@@ -3,6 +3,7 @@
 
 import 'egg'; // Make sure ts to import egg declaration at first
 import Card from '../../../app/controller/card';
+import CardPackage from '../../../app/controller/cardPackage';
 import Gen from '../../../app/controller/gen';
 import Home from '../../../app/controller/home';
 import Manage from '../../../app/controller/manage';
@@ -14,6 +15,7 @@ import Weapp from '../../../app/controller/weapp';
 declare module 'egg' {
   interface IController {
     card: Card;
+    cardPackage: CardPackage;
     gen: Gen;
     home: Home;
     manage: Manage;

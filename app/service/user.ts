@@ -91,16 +91,31 @@ export default class UserService extends Service {
     // 系统字段
     userCarInfo.Version = 1;
     userCarInfo.IsNew = 1;
+
+    let orderCard;
+    if (body.CardId) {
+      const card = await this.ctx.service.card.findOne(body.CardId);
+      orderCard = new OrderCard();
+      orderCard.Status = OrderCardStatus.start;
+      orderCard.CardId = body.CardId;
+      orderCard.Title = card.Title;
+      orderCard.Explain = card.Explain;
+      orderCard.Price = card.Price;
+      orderCard.OriginalPrice = card.OriginalPrice;
+    }
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       await transactionalEntityManager.save(user);
       userCarInfo.UserId = user.Id;
       await transactionalEntityManager.save(userCarInfo);
+      if (orderCard) {
+        orderCard.UserId = user.Id;
+        await transactionalEntityManager.save(orderCard);
+      }
     });
 
-    const result = Object.assign({}, user, localUser, {register: false});
     await this.updateUserStatus(session.id, user);
 
-    return result;
+    return user;
   }
 
   public async queryAll(userId: number):

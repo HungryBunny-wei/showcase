@@ -8,8 +8,6 @@ export enum MonthCardType {
 
 @Entity('User_CardPackage')
 export class UserCardPackage extends Base {
-  @Column('int')
-  CardId: number;
   @Column('datetime')
   StartTime: Date;
   @Column('datetime')
@@ -30,4 +28,18 @@ export class UserCardPackage extends Base {
   OrderCardId: number;
   @Column({type: 'datetime', nullable: true})
   BuyTime: Date;
+
+  /**
+   * 月卡信息
+   */
+  @Column('int')
+  CardId: number; // 月卡Id
+  @Column()
+  Title: string; // 标题;
+  @Column('longtext')
+  Explain: number; // 说明
+  @Column('decimal')
+  Price: string; // 价格
+  @Column('decimal')
+  OriginalPrice: string; // 原价
 }

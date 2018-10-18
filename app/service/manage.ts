@@ -49,13 +49,17 @@ export default class ManageService extends Service {
     userCardPackage.UserId = user.Id;
     userCardPackage.Num = 1;
     userCardPackage.Max = 1;
-    userCardPackage.Type = orderCard.Type;
     userCardPackage.ServiceProviderId = serviceProvider.Id;
     userCardPackage.ServiceProviderName = serviceProvider.Name;
     userCardPackage.Days = 30;
     userCardPackage.OrderCardId = orderCard.Id;
     userCardPackage.BuyTime = orderCard.CreaTime;
     orderCard.ConfirmTime = moment().toDate();
+    userCardPackage.CardId = orderCard.CardId;
+    userCardPackage.Title = orderCard.Title;
+    userCardPackage.Explain = orderCard.Explain;
+    userCardPackage.Price = orderCard.Price;
+    userCardPackage.OriginalPrice = orderCard.OriginalPrice;
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       await transactionalEntityManager.save(userCardPackage);
       await transactionalEntityManager.save(orderCard);

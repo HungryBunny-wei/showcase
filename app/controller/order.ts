@@ -2,7 +2,7 @@ import {Controller} from 'egg';
 import {EntityManager, Repository} from 'typeorm';
 import {OrderCard, OrderCardStatus} from '../entity/order-card';
 import {OrderInfo, OrderInfoStatus} from '../entity/order-info';
-import {MonthCardType, UserCardPackage} from '../entity/user-card-package';
+import {UserCardPackage} from '../entity/user-card-package';
 import {ErrorService} from '../lib/error/error.service';
 
 export default class CardController extends Controller {
@@ -65,15 +65,15 @@ export default class CardController extends Controller {
     const localUser = this.ctx.locals.user;
     const body = this.ctx.request.body;
 
+    const card = await this.ctx.service.card.findOne(body.CardId);
     const orderCard = new OrderCard();
-    if (body.Type.toString() === MonthCardType.vip.toString()) {
-      orderCard.RealPayment = '300';
-    } else {
-      orderCard.RealPayment = '220';
-    }
     orderCard.Status = OrderCardStatus.start;
-    orderCard.Type = body.Type;
     orderCard.UserId = localUser.Id; // 购买人
+    orderCard.CardId = body.CardId;
+    orderCard.Title = card.Title;
+    orderCard.Explain = card.Explain;
+    orderCard.Price = card.Price;
+    orderCard.OriginalPrice = card.OriginalPrice;
     await orderCardRepo.save(orderCard);
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       /*
@@ -151,7 +151,11 @@ export default class CardController extends Controller {
     userCardPackage.EndTime = endTime;
     userCardPackage.Max = 0;
     userCardPackage.Num = 0;
-    userCardPackage.Type = orderCard.Type;
+    userCardPackage.CardId = orderCard.CardId;
+    userCardPackage.Title = orderCard.Title;
+    userCardPackage.Explain = orderCard.Explain;
+    userCardPackage.Price = orderCard.Price;
+    userCardPackage.OriginalPrice = orderCard.OriginalPrice;
     await userCardPackageRepo.save(userCardPackage);
     orderCard.Status = OrderCardStatus.confirm;
     await orderCardRepo.save(orderCard);

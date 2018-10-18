@@ -6,7 +6,7 @@ export enum OrderCardStatus {
   confirm = '1', // 确认订单
 }
 
-@Entity('Order_Card')
+@Entity()
 export class OrderCard extends Base {
 
   @Column()
@@ -15,8 +15,17 @@ export class OrderCard extends Base {
   UserId: number;
   @Column('int')
   CardId: number; // 月卡Id
+  @Column()
+  Title: string; // 标题;
+  @Column('longtext')
+  Explain: number; // 说明
   @Column('decimal')
-  RealPayment: string;
+  Price: string; // 价格
+  @Column('decimal')
+  OriginalPrice: string; // 原价
+  // @Column('decimal')
+  // RealPayment: string;
+
   @Column({type: 'datetime', nullable: true})
   ConfirmTime: Date;
 }

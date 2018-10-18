@@ -1,6 +1,11 @@
 import {Column, Entity} from 'typeorm';
 import {Base} from './base';
 
+export enum CardStatus {
+  'enable' = 1,
+  'close' = 2,
+}
+
 @Entity()
 export class Card extends Base {
   @Column()
@@ -11,4 +16,6 @@ export class Card extends Base {
   Price: string; // 价格
   @Column('decimal')
   OriginalPrice: string; // 原价
+  @Column()
+  Status: CardStatus;
 }
