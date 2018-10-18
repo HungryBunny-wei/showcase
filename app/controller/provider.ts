@@ -120,7 +120,7 @@ where usercard.Type = 0 and ordercardover.ServiceProviderId = ?
     const overList: any[] = await this.ctx.app.typeorm.query(sql,
       [this.ctx.locals.user.ServiceProviderId]);
     const sumSQl = `
-    select sum(ordercard.RealPayment) as sum from User_CardPackage as usercard
+    select sum(ordercard.Price) as sum from User_CardPackage as usercard
 left join Order_Card as ordercard
   on usercard.OrderCardId = ordercard.Id
   WHERE usercard.ServiceProviderId = ?
