@@ -15,10 +15,9 @@ export default (app: Application) => {
   router.get('/api/user/card/lookOver', authUser, userRequired, weapp, app.controller.user.cardLookOver); // 查看月卡订单完成情况
   router.post('/api/user/card/confirm', authUser, userRequired, weapp, app.controller.user.cardConfirm); // 确认月卡完成
 
-  router.post('/api/order/save', authUser, userRequired, weapp, app.controller.order.save); // 保存订单
-  router.post('/api/order/confirm', authUser, userRequired, weapp, app.controller.order.confirm); // 确认完成订单
+  router.post('/api/order/save', authUser, userRequired, weapp, app.controller.order.save); // 保存预约信息
   router.post('/api/order/queryById', authUser, userRequired, weapp, app.controller.order.queryById); // 通过订单id查询订单
-  router.get('/api/order', authUser, userRequired, weapp, app.controller.order.index); // 查询订单
+  router.get('/api/order', authUser, userRequired, weapp, app.controller.order.index); // 查询预约记录
 
   router.post('/api/order/buyCard', authUser, userRequired, weapp, app.controller.order.buyCard); // 提交月卡订单
   router.get('/api/order/card/history', authUser, userRequired, weapp, app.controller.order.orderCardHistory); // 月卡购买记录
@@ -31,13 +30,14 @@ export default (app: Application) => {
   /**
    * 服务商接口
    */
-  router.get('/api/provider', authUser, userRequired, weapp, app.controller.provider.get);
-  router.post('/api/provider', authUser, userRequired, weapp, app.controller.provider.save);
-  router.put('/api/provider', authUser, userRequired, weapp, app.controller.provider.update);
-  router.get('/api/provider/card/user', authUser, userRequired, weapp, app.controller.provider.cardUser);
-  router.post('/api/provider/card/over', authUser, userRequired, weapp, app.controller.provider.cardOver);
-  router.post('/api/provider/card/lookOver', authUser, userRequired, weapp, app.controller.provider.cardLookOver);
-  router.get('/api/provider/card/report', authUser, userRequired, weapp, app.controller.provider.cardReport);
+  router.get('/api/provider', authUser, userRequired, weapp, app.controller.provider.get); // 获取供应商
+  router.post('/api/provider', authUser, userRequired, weapp, app.controller.provider.save); //
+  router.put('/api/provider', authUser, userRequired, weapp, app.controller.provider.update); // 更新供应商
+  router.get('/api/provider/report', authUser, userRequired, weapp, app.controller.provider.cardReport); // 供应商报表
+  router.get('/api/provider/card/user', authUser, userRequired, weapp, app.controller.provider.cardUser); // 查看月卡用户
+  router.post('/api/provider/card/over', authUser, userRequired, weapp, app.controller.provider.cardOver); // 完成月卡
+  router.post('/api/provider/card/lookOver', authUser, userRequired, weapp, app.controller.provider.cardLookOver); // 查看月卡完成情况
+  router.post('/api/provider/order/over', authUser, userRequired, weapp, app.controller.provider.orderOver); // 确认完成订单
   /**
    * 管理接口
    */

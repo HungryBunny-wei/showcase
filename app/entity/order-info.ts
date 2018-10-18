@@ -1,46 +1,28 @@
 import {Column, Entity} from 'typeorm';
 import {Base} from './base';
 
+export enum OrderInfoStatus {
+  start = '0', // 预约
+  over = '1', // 预约完成
+}
+
 @Entity('Order_Info')
 export class OrderInfo extends Base {
 
   @Column('int')
-  Status: number;
-
-  @Column('int')
-  UserCarInfoId: number;
+  Status: OrderInfoStatus;
   @Column('int')
   UserId: number;
-
   @Column('datetime')
-  StartTime: Date;
-  @Column('datetime')
-  EndTime: Date;
+  StartTime: Date; // 预约日期
+  @Column()
+  StartTimeSlot: string; // 预约时间段
   @Column({type: 'datetime', nullable: true})
-  ServiceTime: Date;
-  @Column({type: 'datetime', nullable: true})
-  ReallyTime: Date;
-  @Column()
-  AddressName: string;
-  @Column()
-  Address: string;
-  @Column()
-  Latitude: string;
-  @Column()
-  Longitude: string;
-  @Column()
-  ServiceType: string;
+  OverTime: Date; // 完成时间
   @Column()
   Name: string;
   @Column()
   Phone: string;
-  @Column()
-  PaymentMethod: string;
-  @Column('decimal')
-  RealPayment: string;
-
-  @Column({type: 'int', nullable: true})
-  CardId: number;
   @Column({type: 'int', nullable: true})
   ServiceProviderId: number;
 

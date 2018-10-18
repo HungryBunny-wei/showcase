@@ -1,7 +1,7 @@
 import {Controller} from 'egg';
 import {EntityManager, Repository} from 'typeorm';
 import {OrderCard, OrderCardStatus} from '../entity/order-card';
-import {OrderInfo} from '../entity/order-info';
+import {OrderInfo, OrderInfoStatus} from '../entity/order-info';
 import {MonthCardType, UserCardPackage} from '../entity/user-card-package';
 import {ErrorService} from '../lib/error/error.service';
 
@@ -16,6 +16,7 @@ export default class CardController extends Controller {
 
     const orderInfo = new OrderInfo();
     orderInfo.UserId = localUser.Id;
+    orderInfo.Status = OrderInfoStatus.start;
     Object.assign(orderInfo, this.ctx.request.body);
     await this.ctx.service.weapp.sendAppointment(orderInfo);
     await orderInfoRepo.save(orderInfo);
@@ -25,29 +26,7 @@ export default class CardController extends Controller {
     };
   }
 
-  async confirm() {
-    const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
 
-    if (!this.ctx.request.body.Id) {
-      throw ErrorService.RuntimeError('sys.model.IdIsNull');
-    }
-    const orderInfo = await orderInfoRepo.findOne({
-      where: {
-        Id: this.ctx.request.body.Id,
-      },
-    });
-    if (!orderInfo) {
-      throw ErrorService.RuntimeError('sys.model.NotFind');
-    }
-    orderInfo.Status = 3;
-    orderInfo.ReallyTime = new Date();
-    await orderInfoRepo.save(orderInfo);
-
-    this.ctx.body = {
-      success: true,
-      obj: orderInfo,
-    };
-  }
 
   async index() {
     const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);

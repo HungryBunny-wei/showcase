@@ -5,6 +5,7 @@ import {ServiceProvider, ServiceProviderStatus} from '../entity/service-provider
 import {ErrorService} from '../lib/error/error.service';
 
 import * as moment from 'moment';
+import {OrderInfo, OrderInfoStatus} from '../entity/order-info';
 
 export default class ProviderController extends Controller {
 
@@ -146,6 +147,30 @@ GROUP BY usercard.ServiceProviderId
         moneySum: sum[0].sum, // 收益
         scoreRatio: score / (confirmSum * 5), // 好评率
       },
+    };
+  }
+
+  public async orderOver() {
+    const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
+
+    if (!this.ctx.request.body.Id) {
+      throw ErrorService.RuntimeError('sys.model.IdIsNull');
+    }
+    const orderInfo = await orderInfoRepo.findOne({
+      where: {
+        Id: this.ctx.request.body.Id,
+      },
+    });
+    if (!orderInfo) {
+      throw ErrorService.RuntimeError('sys.model.NotFind');
+    }
+    orderInfo.Status = OrderInfoStatus.over;
+    orderInfo.OverTime = new Date();
+    await orderInfoRepo.save(orderInfo);
+
+    this.ctx.body = {
+      success: true,
+      obj: orderInfo,
     };
   }
 }
