@@ -64,7 +64,7 @@ export default class UserService extends Service {
     return result;
   }
 
-  public async register(): Promise<User & { register: boolean }> {
+  public async register(): Promise<User> {
     const session = this.ctx.locals.session;
     const localUser = this.ctx.locals.user;
     const body = this.ctx.request.body;

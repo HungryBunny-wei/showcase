@@ -8,8 +8,8 @@ export enum MonthCardType {
 
 @Entity('User_CardPackage')
 export class UserCardPackage extends Base {
-  @Column()
-  Type: MonthCardType;
+  @Column('int')
+  CardId: number;
   @Column('datetime')
   StartTime: Date;
   @Column('datetime')

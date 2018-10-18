@@ -1,6 +1,5 @@
 import {Column, Entity} from 'typeorm';
 import {Base} from './base';
-import {MonthCardType} from './user-card-package';
 
 export enum OrderCardStatus {
   start = '0', // 客户下单
@@ -14,8 +13,8 @@ export class OrderCard extends Base {
   Status: OrderCardStatus;
   @Column('int')
   UserId: number;
-  @Column()
-  Type: MonthCardType;
+  @Column('int')
+  CardId: number; // 月卡Id
   @Column('decimal')
   RealPayment: string;
   @Column({type: 'datetime', nullable: true})

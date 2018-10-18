@@ -26,8 +26,6 @@ export default class CardController extends Controller {
     };
   }
 
-
-
   async index() {
     const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
 

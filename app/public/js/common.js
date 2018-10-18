@@ -132,11 +132,17 @@ MeiCar.prototype.get = function (url, body, call, errCall) {
     });
   })
 }
-MeiCar.prototype.cehckLogin = function () {
+MeiCar.prototype.cehckLogin = function (call) {
   layui.use(['layer'], () => {
     let layer = layui.layer
       , $ = layui.jquery;
-    if (!window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING)) {
+    if (window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING)) {
+      this.get('/api/user/queryAll', {}, (result) => {
+        window.sessionStorage.setItem('meiyou.userInfo', result.obj);
+      }, () => {
+        window.location.href = './login.html';
+      })
+    } else {
       window.location.href = './login.html';
     }
   })
