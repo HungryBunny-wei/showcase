@@ -75,7 +75,7 @@ export default class WeappService extends Service {
           value: '预约吸尘',
         },
         keyword2: {
-          value: `${moment(orderInfo.StartTime).toDate().toString()}~${moment(orderInfo.EndTime).toDate().toString()}`,
+          value: `${moment(orderInfo.StartTime).format('YYYY-MM-DD')} ${orderInfo.StartTimeSlot}`,
         },
         keyword3: {
           value: user.Name,
