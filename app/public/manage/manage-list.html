@@ -90,7 +90,7 @@
         { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'Manage', title: '是否是管理员', width: 120, }
+        , { field: 'Manage', title: '管理权限', width: 120, templet: '#dataTable_title' }
         , { field: 'OpenId', title: 'OpenID', width: 120, }
         , { field: 'NickName', title: '微信昵称', width: 120, }
         , { field: 'LoginTime', title: '最后登录时间', width: 170 }
@@ -200,6 +200,13 @@
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除管理员</button>
     </div>
+</script>
+<script type="text/html" id="dataTable_title">
+    {{# if(d.Manage === 'manage'){ }}
+    管理员
+    {{# } else if(d.Manage === 'admin'){ }}
+    超级管理员
+    {{# } }}
 </script>
 </body>
 </html>

@@ -1,24 +1,31 @@
 {
   "data": [
     {
-      "text": "用卡申请列表",
+      "text": "管理员操作",
       "icon": "&#xe638;",
-      "href": "manage/card-list.html"
-    },
-    {
-      "text": "用户管理",
-      "icon": "&#xe638;",
-      "href": "manage/user-list.html"
-    },
-    {
-      "text": "配置服务商",
-      "icon": "&#xe638;",
-      "href": "manage/service-list.html"
-    },
-    {
-      "text": "配置管理员",
-      "icon": "&#xe638;",
-      "href": "manage/manage-list.html"
+      "subset":[
+        {
+          "text": "用卡申请列表",
+          "icon": "&#xe638;",
+          "href": "manage/card-list.html"
+        },
+        {
+          "text": "用户管理",
+          "icon": "&#xe638;",
+          "href": "manage/user-list.html"
+        },
+        {
+          "text": "配置服务商",
+          "icon": "&#xe638;",
+          "href": "manage/service-list.html"
+        },
+        {
+          "text": "配置管理员",
+          "icon": "&#xe638;",
+          "href": "manage/manage-list.html"
+        }
+      ]
     }
+
   ]
 }
