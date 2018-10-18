@@ -72,8 +72,6 @@ layui.use(['layer', 'element', 'util'], function () {
 
     // 添加TAB选项卡
     window.addTab = function (elem, tit, url) {
-        window.abc = elem.children('a');
-        console.log(elem.children('a'));
         var card = 'card';                                              // 选项卡对象
         var title = tit ? tit : elem.children('a').context.innerHTML;              // 导航栏text
         var src = url ? url : elem.children('a').context.getAttribute('href-url');      // 导航栏跳转URL

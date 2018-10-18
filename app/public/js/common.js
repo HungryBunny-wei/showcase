@@ -2,6 +2,7 @@ function MeiCar() {
 
 }
 
+MeiCar.prototype.LOGIN_SESSING = 'meiyou.session';
 MeiCar.prototype.getCsrf = function () {
   var keyValue = document.cookie.match('(^|;) ?csrfToken=([^;]*)(;|$)');
   return keyValue ? keyValue[2] : null;
@@ -20,7 +21,7 @@ MeiCar.prototype.login = function (phone, password) {
       // contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
       // processData: false, // NEEDED, DON'T OMIT THIS
       success: function (result) {
-        window.localStorage.setItem('meiyou.session', result.session.id);
+        window.localStorage.setItem(MeiCar.prototype.LOGIN_SESSING, result.session.id);
         window.location.href = './index.html';
       },
       error: function (responseStr, a) {
@@ -35,7 +36,7 @@ MeiCar.prototype.login = function (phone, password) {
 MeiCar.prototype.getPostHeader = function () {
   let result = {
     'x-csrf-token': this.getCsrf(),
-    'X-WX-Id': window.localStorage.getItem('meiyou.session'),
+    'X-WX-Id': window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING),
     'X-WX-Skey': 'bravo',
   }
   if (!result['X-WX-Id']) {
@@ -128,6 +129,15 @@ MeiCar.prototype.get = function (url, body, call, errCall) {
         }
       }
     });
+  })
+}
+MeiCar.prototype.cehckLogin = function () {
+  layui.use(['layer'], () => {
+    let layer = layui.layer
+      , $ = layui.jquery;
+    if (!window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING)) {
+      window.location.href = './login.html';
+    }
   })
 }
 

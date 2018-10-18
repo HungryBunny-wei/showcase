@@ -77,6 +77,7 @@ declare module 'egg' {
     user: User;
     csrf: any;
     config: EggAppConfig;
+    weappSession: { sessionKey: string, openId: string, OpenId: string , UserId: number, Phone:string};
     session: {
       id: string,
       skey: string,

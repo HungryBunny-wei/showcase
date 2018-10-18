@@ -35,7 +35,7 @@ export default class UserService extends Service {
     }
     const token = this.ctx.uuid();
     result.session.id = token;
-    await this.updateUserStatus(token, Object.assign({}, weappSession, result.userInfo));
+    await this.updateUserStatus(token, weappSession);
 
     return result;
   }
@@ -57,7 +57,7 @@ export default class UserService extends Service {
       result.userInfo.register = false; // 不需要去注册信息
       const token = this.ctx.uuid();
       result.session.id = token;
-      await this.updateUserStatus(token, Object.assign({}, result.userInfo));
+      await this.updateUserStatus(token, user);
     } else {
       throw ErrorService.RuntimeError('user.passError'); // 密码错误
     }
@@ -78,6 +78,7 @@ export default class UserService extends Service {
     user.AvatarUrl = body.AvatarUrl;
     user.Birthday = body.Birthday;
     user.LoginTime = new Date();
+    user.register = false;
     const userCarInfo = new UserCarInfo();
     userCarInfo.AddressName = body.site.AddressName;
     userCarInfo.Address = body.site.Address;
@@ -97,7 +98,7 @@ export default class UserService extends Service {
     });
 
     const result = Object.assign({}, user, localUser, {register: false});
-    await this.updateUserStatus(session.id, result);
+    await this.updateUserStatus(session.id, user);
 
     return result;
   }
@@ -217,7 +218,7 @@ export default class UserService extends Service {
     return user;
   }
 
-  public async updateUserStatus(token, user: any) {
+  public async updateUserStatus(token, user: { OpenId?: string, Phone?: string, UserId?: number }) {
     const redis = this.app.redis;
     const value = JSON.stringify(user);
     await redis.del(token);

@@ -36,4 +36,7 @@ export class User extends Base {
 
   @Column({nullable: true})
   Password: string;
+
+  @Column('tinyint', {nullable: true})
+  register: boolean;
 }

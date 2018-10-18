@@ -3,7 +3,7 @@ import {ErrorService} from '../lib/error/error.service';
 
 export default function userRequiredMiddleware() {
   /**
-   * 需要登录
+   * 需要注册
    */
   return async (ctx: Context, next: () => Promise<any>): Promise<any> => {
     if (!ctx.locals.user) {
