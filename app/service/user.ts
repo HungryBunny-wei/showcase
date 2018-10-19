@@ -24,7 +24,7 @@ export default class UserService extends Service {
     };
 
     const weappSession = await this.ctx.service.wachat.sessionKey(jscode);
-    const user = await this.queryByOpenId(weappSession.openId);
+    const user = await this.queryByOpenId(weappSession.OpenId);
     if (user) {
       user.NickName = nickName;
       user.AvatarUrl = avatarUrl;
@@ -35,7 +35,7 @@ export default class UserService extends Service {
     }
     const token = this.ctx.uuid();
     result.session.id = token;
-    await this.updateUserStatus(token, weappSession);
+    await this.updateUserStatus(token, {OpenId: weappSession.OpenId});
 
     return result;
   }
@@ -66,14 +66,14 @@ export default class UserService extends Service {
 
   public async register(): Promise<User> {
     const session = this.ctx.locals.session;
-    const localUser = this.ctx.locals.user;
+    const weappSession = this.ctx.locals.weappSession;
     const body = this.ctx.request.body;
     const user = new User();
     user.Name = body.Name;
     user.UserType = 'user';
     user.Manage = 'none';
     user.Phone = body.Phone;
-    user.OpenId = localUser.OpenId;
+    user.OpenId = weappSession.OpenId;
     user.NickName = body.NickName;
     user.AvatarUrl = body.AvatarUrl;
     user.Birthday = body.Birthday;
