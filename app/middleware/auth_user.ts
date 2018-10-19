@@ -24,6 +24,10 @@ export default function authUserMiddleware() {
       }
       if (user) {
         ctx.locals.user = user;
+      } else {
+        user = new User();
+        user.register = true;
+        ctx.locals.user = user;
       }
     } else {
       throw ErrorService.RuntimeError('sys.noLogin').setStatus(401);

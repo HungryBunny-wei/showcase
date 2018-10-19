@@ -96,6 +96,7 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     user.Phone = this.ctx.request.body.Phone;
     user.UserType = 'user';
     user.Manage = 'none';
+    user.register = true;
     await this.ctx.app.typeorm.getRepository(User).save(user);
     this.ctx.body = {
       success: true,
