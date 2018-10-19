@@ -24,8 +24,8 @@ export default (app: Application) => {
   router.get('/api/order/getCardOrder', authUser, userRequired, weapp, app.controller.order.getCardOrder); // 获取个人月卡订单
   router.post('/api/order/confirmCardOrder', authUser, userRequired, weapp, app.controller.order.confirmCardOrder); // 确认月卡订单
 
+  router.get('/api/card', app.controller.card.index); // 查询有效月卡
   router.get('/api/cardPackage', authUser, userRequired, weapp, app.controller.card.index); // 查询卡包
-  router.get('/api/card', authUser, weapp, app.controller.card.index); // 查询有效月卡
 
   router.post('/api/weapp/form', authUser, userRequired, weapp, app.controller.weapp.formCreate);
   /**
