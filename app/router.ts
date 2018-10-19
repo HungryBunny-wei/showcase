@@ -56,6 +56,9 @@ export default (app: Application) => {
   router.post('/api/manage/user/manage', authUser, userRequired, weapp, app.controller.manage.userAddManage); // 添加管理员
   router.del('/api/manage/user/manage/:id', authUser, userRequired, weapp, app.controller.manage.userDelManage); // 删除管理员
   router.get('/api/manage/user/:id', authUser, userRequired, weapp, app.controller.manage.userFindById); // 查询用户
+  router.get('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardIndex); // 查询月卡
+  router.post('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardSave); // 新增月卡
+  router.put('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardUpdate); // 更新月卡
 
   /**
    * 通用接口

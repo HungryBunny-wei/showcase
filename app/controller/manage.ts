@@ -1,6 +1,7 @@
 import {Controller} from 'egg';
 import {User} from '../entity/user';
 import {ServiceProvider, ServiceProviderStatus} from '../entity/service-provider';
+import {Card, CardStatus} from '../entity/card';
 
 export default class ManageController extends Controller {
 
@@ -138,6 +139,37 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     this.ctx.body = {
       success: true,
       obj: await this.ctx.service.manage.userDelManage(this.ctx.params.id),
+    };
+  }
+
+  public async cardIndex() {
+    const cardRepo = this.ctx.app.typeorm.getRepository(Card);
+    this.ctx.body = {
+      success: true,
+      obj: await cardRepo.find(),
+    };
+  }
+
+  public async cardSave() {
+    const cardRepo = this.ctx.app.typeorm.getRepository(Card);
+    const card = new Card();
+    Object.assign(card, this.ctx.request.body);
+    card.Status = CardStatus.enable;
+    await cardRepo.save(card);
+    this.ctx.body = {
+      success: true,
+      obj: card,
+    };
+  }
+
+  public async cardUpdate() {
+    const cardRepo = this.ctx.app.typeorm.getRepository(Card);
+    // const card = await this.ctx.service.card.findOne(this.ctx.request.body.Id);
+    // Object.assign(card, this.ctx.request.body);
+    const card = await await cardRepo.update({Id: this.ctx.request.body.Id}, this.ctx.request.body);
+    this.ctx.body = {
+      success: true,
+      obj: card,
     };
   }
 }

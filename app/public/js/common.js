@@ -138,6 +138,31 @@ MeiCar.prototype.get = function (url, body, call, errCall) {
     });
   })
 }
+MeiCar.prototype.put = function (url, body, call, errCall) {
+  layui.use(['layer'], () => {
+    let layer = layui.layer
+      , $ = layui.jquery;
+    $.ajax({
+      url: url,
+      headers: this.getPostHeader(),
+      data: body,
+      method: 'PUT',
+      success: function (result) {
+        call(result)
+      },
+      error: function (responseStr, a) {
+        console.log(responseStr);
+        if (errCall) {
+          errCall(responseStr);
+        } else {
+          layer.alert(responseStr.responseJSON.message, {
+            title: '请求失败'
+          });
+        }
+      }
+    });
+  })
+}
 MeiCar.prototype.checkLogin = function (call) {
   layui.use(['layer'], () => {
     let layer = layui.layer
