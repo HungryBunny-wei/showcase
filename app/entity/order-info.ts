@@ -20,10 +20,10 @@ export class OrderInfo extends Base {
   @Column({type: 'datetime', nullable: true})
   OverTime: Date; // 完成时间
   @Column()
-  Name: string;
+  Name: string; // 名称
   @Column()
-  Phone: string;
+  Phone: string; // 手机
   @Column({type: 'int', nullable: true})
-  ServiceProviderId: number;
+  ServiceProviderId: number; // 服务商
 
 }
