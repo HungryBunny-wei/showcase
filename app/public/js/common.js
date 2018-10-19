@@ -11,16 +11,15 @@ MeiCar.prototype.login = function (phone, password) {
   layui.use(['layer'], () => {
     let layer = layui.layer
       , $ = layui.jquery;
+
     $.ajax({
       url: '/api/user/login',
+      // headers: this.getPostHeader(),
       data: {
         Phone: phone,
-        Password: password,
+        Password: password
       },
-      headers: this.getPostHeader(),
       method: 'POST',
-      // contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-      // processData: false, // NEEDED, DON'T OMIT THIS
       success: function (result) {
         window.localStorage.setItem(MeiCar.prototype.LOGIN_SESSING, result.session.id);
         window.location.href = './index.html';
@@ -32,16 +31,19 @@ MeiCar.prototype.login = function (phone, password) {
         });
       }
     });
+
   });
 }
 MeiCar.prototype.getPostHeader = function () {
   let result = {
-    'x-csrf-token': this.getCsrf(),
     'X-WX-Id': window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING),
     'X-WX-Skey': 'bravo',
   }
   if (!result['X-WX-Id']) {
     window.location.href = './login.html';
+  }
+  if(this.getCsrf()){
+    result['x-csrf-token'] = this.getCsrf();
   }
   return result;
 }
@@ -103,7 +105,9 @@ MeiCar.prototype.post = function (url, body, call, errCall) {
         if (errCall) {
           errCall(responseStr);
         } else {
-          alert("登录失败: " + responseStr.responseJSON.message);
+          layer.alert(responseStr.responseJSON.message, {
+            title: '请求失败'
+          });
         }
       }
     });
@@ -126,7 +130,9 @@ MeiCar.prototype.get = function (url, body, call, errCall) {
         if (errCall) {
           errCall(responseStr);
         } else {
-          alert("登录失败: " + responseStr.responseJSON.message);
+          layer.alert(responseStr.responseJSON.message, {
+            title: '请求失败'
+          });
         }
       }
     });

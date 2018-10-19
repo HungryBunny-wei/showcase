@@ -23,7 +23,11 @@ export class OrderInfo extends Base {
   Name: string; // 名称
   @Column()
   Phone: string; // 手机
-  @Column({type: 'int', nullable: true})
+  @Column({type: 'int'})
   ServiceProviderId: number; // 服务商
+  @Column()
+  ServiceProviderName: string; // 服务商
+  @Column()
+  ServiceProviderAddress: string; // 服务商
 
 }

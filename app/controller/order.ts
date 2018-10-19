@@ -18,6 +18,9 @@ export default class CardController extends Controller {
     orderInfo.UserId = localUser.Id;
     orderInfo.Status = OrderInfoStatus.start;
     Object.assign(orderInfo, this.ctx.request.body);
+    const provider = await this.ctx.service.provider.findOne(orderInfo.ServiceProviderId);
+    orderInfo.ServiceProviderName = provider.Name;
+    orderInfo.ServiceProviderAddress = provider.Address;
     await this.ctx.service.weapp.sendAppointment(orderInfo);
     await orderInfoRepo.save(orderInfo);
     this.ctx.body = {
