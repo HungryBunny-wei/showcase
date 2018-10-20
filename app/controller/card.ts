@@ -1,6 +1,5 @@
 import {Controller} from 'egg';
 import {Card, CardStatus} from '../entity/card';
-import {ErrorService} from '../lib/error/error.service';
 
 export default class CardController extends Controller {
 
@@ -16,15 +15,10 @@ export default class CardController extends Controller {
     };
   }
 
-  async findOne(id: number) {
-    if (!id) {
-      throw ErrorService.RuntimeErrorIdIsNull();
-    }
-    const cardRepo = this.ctx.app.typeorm.getRepository(Card);
-    const card = await cardRepo.find({where: {Id: id}});
-    if (!card) {
-      throw ErrorService.RuntimeErrorNotFind();
-    }
-    return card;
+  async findOne() {
+    this.ctx.body = {
+      success: true,
+      obj: await this.ctx.service.card.findOne(this.ctx.query.id),
+    };
   }
 }

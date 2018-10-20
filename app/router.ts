@@ -25,7 +25,9 @@ export default (app: Application) => {
   router.post('/api/order/confirmCardOrder', authUser, userRequired, weapp, app.controller.order.confirmCardOrder); // 确认月卡订单
 
   router.get('/api/card', app.controller.card.index); // 查询有效月卡
-  router.get('/api/cardPackage', authUser, userRequired, weapp, app.controller.card.index); // 查询卡包
+  router.get('/api/card/:id', app.controller.card.findOne); // 查询有效月卡
+  router.get('/api/cardPackage', authUser, userRequired, weapp, app.controller.cardPackage.index); // 查询个人卡包
+  router.get('/api/cardPackage/:id', authUser, userRequired, weapp, app.controller.cardPackage.findOne); // 查询个人卡包
 
   router.post('/api/weapp/form', authUser, userRequired, weapp, app.controller.weapp.formCreate);
   /**
