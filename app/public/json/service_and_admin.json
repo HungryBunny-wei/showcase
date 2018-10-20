@@ -5,7 +5,7 @@
       "icon": "&#xe638;",
       "subset":[
         {
-          "text": "月卡申请列表",
+          "text": "月卡服务订单",
           "icon": "&#xe638;",
           "href": "service/card-list.html"
         }

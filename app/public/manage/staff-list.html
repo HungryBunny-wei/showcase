@@ -47,7 +47,7 @@
 <script type="text/javascript">
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    window.meiCar.get('/api/manage/provider', {}, (result) => {
+    window.meiCar.get('/api/manage/provider', {Status: 1}, (result) => {
       let providers = result.obj;
       let htmls = [`<option value="">请选择或输入搜索</option>`];
       providers.forEach((provider) => {
