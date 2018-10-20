@@ -46,17 +46,35 @@
 <!-- 表格 -->
 <table id="dataTable" lay-filter="dataTable"></table>
 
-<!--新增管理员-->
-<div id="layui-form" style="display: none;">
-    <!-- <form class="layui-form" action="">
-         <div class="layui-form-item">
-             <label class="layui-form-label">用户</label>
-             <div class="layui-input-block">
-                 <select id="UserId" name="UserId" lay-verify="required" lay-search>
-                 </select>
-             </div>
-         </div>
-     </form>-->
+
+<!--编辑管理员-->
+<div id="layui-form-update" style="display: none;">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input id="Name" type="text" name="Name" required autocomplete="off"
+                       placeholder="请输入名称"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机</label>
+            <div class="layui-input-block">
+                <input id="Phone" type="tel" name="Phone" placeholder="将用来登录账号"
+                       autocomplete="new-password"
+                       class="layui-input" autocapitalize="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input id="Password" type="password" name="Password" required
+                       autocomplete="new-password" placeholder="不填就不修改密码"
+                       class="layui-input">
+            </div>
+        </div>
+    </form>
 </div>
 <script type="text/javascript" src="../frame/layui/layui.js"></script>
 <script type="text/javascript" src="../js/index.js"></script>
@@ -133,6 +151,31 @@
     table.on('tool(dataTable)', function (obj) {
       console.log(obj);
       switch (obj.event) {
+        case 'edit':
+          layer.open({
+            title: '修改管理员信息',
+            yes: function (index, layero) {
+              let data = {
+                Password: layero.find('#Password')[0].value,
+                Name: layero.find('#Name')[0].value,
+                Phone: layero.find('#Phone')[0].value,
+              };
+              if (!data.Name || !data.Phone) {
+                return;
+              }
+              Object.assign(obj.data, data);
+              window.meiCar.put('/api/manage/user', obj.data, () => {
+                layer.close(index);
+                tableIns.reload();
+              });
+            },
+            success: function(layero, index){
+              layero.find('#Name')[0].value = obj.data.Name;
+              layero.find('#Phone')[0].value = obj.data.Phone;
+            },
+            content: $("#layui-form-update").html()
+          });
+          break;
         case 'delete':
           layer.open({
             title: '删除管理员',
@@ -184,7 +227,7 @@
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="edit">编辑</button>
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">编辑</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除管理员</button>
     </div>
 </script>
