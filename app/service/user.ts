@@ -1,5 +1,5 @@
 import {Service} from 'egg';
-import {EntityManager, LessThan, MoreThan, Repository} from 'typeorm';
+import {EntityManager, Equal, LessThan, MoreThan, Repository} from 'typeorm';
 import {OrderCard, OrderCardStatus} from '../entity/order-card';
 import {User} from '../entity/user';
 import {UserCarInfo} from '../entity/user-car-info';
@@ -312,7 +312,7 @@ export default class UserService extends Service {
     const userCardPackage = await userCardPackageRepo.find({
       where: {
         UserId: userId,
-        StartTime: LessThan(moment().format('YYYY-MM-DD')),
+        StartTime: Equal(LessThan(moment().format('YYYY-MM-DD'))),
         EndTime: MoreThan(moment().add('days', 1).format('YYYY-MM-DD')),
       },
     });
