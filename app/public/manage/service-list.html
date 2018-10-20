@@ -76,15 +76,18 @@
 
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    window.meiCar.get('/api/manage/user', {}, (result) => {
-      let users = result.obj;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      users.forEach((user) => {
-        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-      });
-      console.log($('#UserId'));
-      $('#UserId')[0].innerHTML = htmls.join();
-    })
+    console.log(window.meiCar.getUser());
+    const updateUser = function (providerId){
+      window.meiCar.get('/api/manage/user', { UserType: 'staff' , ServiceProviderId: providerId}, (result) => {
+        let users = result.obj;
+        let htmls = [`<option value="">请选择或输入搜索</option>`];
+        users.forEach((user) => {
+          htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+        });
+        console.log($('#UserId'));
+        $('#UserId')[0].innerHTML = htmls.join();
+      })
+    }
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -101,12 +104,14 @@
         , { field: 'Phone', title: '服务商手机号', width: 120 }
         , { field: 'UserName', title: '用户名称', width: 120, }
         , { field: 'Address', title: '服务商地址', width: 170, }
+        , { field: 'Status', title: '状态', width: 80, templet: '#dataTable_status' }
         , { field: 'CreaTime', title: '创建时间', width: 170 }
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
       , url: '/api/manage/provider'
       , method: 'get'
+      , where: { Status: '1'}
       , headers: window.meiCar.getPostHeader()
       , parseData: function (res) { //res 即为原始返回的数据
         return {
@@ -199,8 +204,21 @@
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除服务商</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">分配人员</button>
     </div>
+</script>
+<script type="text/html" id="dataTable_status">
+    {{# if(d.Status == '0'){ }}
+    申请
+    {{# } else if(d.Status == '1') { }}
+    正常
+    {{# } else if(d.Status == '2') { }}
+    拒绝
+    {{# } else if(d.Status == '3') { }}
+    删除
+    {{# } else { }}
+    错误
+    {{# } }}
 </script>
 </body>
 </html>

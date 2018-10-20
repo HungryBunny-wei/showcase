@@ -52,6 +52,9 @@ SELECT
   cardOver.Status as cardOverStatus,
   user.Name,
   user.Phone,
+  staff.Id as StaffId,
+  staff.Phone as StaffPhone,
+  staff.Name as StaffName,
   userCarInfo.Address,
   userCarInfo.AddressName,
   userCarInfo.Latitude,
@@ -64,6 +67,8 @@ FROM order_card_over AS cardOver
     ON userCard.Id = cardOver.UserCardPackageId
   LEFT JOIN User AS user
     ON user.Id = userCard.UserId
+  LEFT JOIN User AS staff
+    ON staff.Id = cardOver.StaffId
   LEFT JOIN User_CarInfo AS userCarInfo
     ON userCard.UserId = userCarInfo.UserId AND userCarInfo.IsNew = 1
 WHERE cardOver.ServiceProviderId = ? and cardOver.CreaTime > ? and cardOver.CreaTime < ?
@@ -78,6 +83,20 @@ WHERE cardOver.ServiceProviderId = ? and cardOver.CreaTime > ? and cardOver.Crea
     this.ctx.body = {
       success: true,
       obj: await this.ctx.app.typeorm.query(sql, [this.ctx.locals.user.ServiceProviderId, date, tomorrow]),
+    };
+  }
+
+  public async cardAddStaff() {
+    const orderCardOverRepo = this.ctx.app.typeorm.getRepository(OrderCardOver);
+    const orderCardOver = await orderCardOverRepo.findOne({Id: this.ctx.request.body.OverId});
+    if (!orderCardOver) {
+      throw ErrorService.RuntimeErrorNotFind();
+    }
+    orderCardOver.StaffId = this.ctx.request.body.StaffId;
+    await orderCardOverRepo.save(orderCardOver);
+    this.ctx.body = {
+      success: true,
+      obj: orderCardOver,
     };
   }
 

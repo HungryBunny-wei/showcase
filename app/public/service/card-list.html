@@ -19,28 +19,18 @@
     <form class="layui-form" action="">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">选择用户</label>
-                <div class="layui-input-block">
-                        <select id="UserId" name="UserId" lay-verify="required" lay-search>
-                        </select>
-                    </div>
-            </div>
-            <div class="layui-inline">
-        <!--<a class="layui-btn layui-btn-danger radius btn-delect" id="btn-delete-all">批量删除</a>-->
-        <a class="layui-btn btn-add btn-default" id="btn-add">添加</a>
-                <!--<a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#x1002;</i></a>-->
-        <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#xe669;</i></a>
+                <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#xe669;</i></a>
             </div>
         </div>
     </form>
     </span>
-    <!--    <span class="fr">
-            <span class="layui-form-label">搜索条件：</span>
-            <div class="layui-input-inline">
-                <input type="text" autocomplete="off" placeholder="请输入搜索条件" class="layui-input">
-            </div>
-            <button class="layui-btn mgl-20">查询</button>
-        </span>-->
+    <span class="fr">
+        <span class="layui-form-label">选择日期：</span>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="currentDate">
+        </div>
+        <button class="layui-btn mgl-20">查询</button>
+    </span>
 </div>
 
 <!-- 表格 -->
@@ -48,59 +38,77 @@
 
 <!--新增管理员-->
 <div id="layui-form" style="display: none;">
-    <!-- <form class="layui-form" action="">
-         <div class="layui-form-item">
-             <label class="layui-form-label">用户</label>
-             <div class="layui-input-block">
-                 <select id="UserId" name="UserId" lay-verify="required" lay-search>
-                 </select>
-             </div>
-         </div>
-     </form>-->
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择员工</label>
+            <div class="layui-input-block">
+                <select id="StaffId" name="StaffId" lay-verify="required" lay-search>
+                </select>
+            </div>
+        </div>
+    </form>
 </div>
 <script type="text/javascript" src="../frame/layui/layui.js"></script>
 <script type="text/javascript" src="../js/index.js"></script>
 <script type="text/javascript" src="../js/common.js"></script>
 <script type="text/javascript">
-
+  Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+      "M+": this.getMonth() + 1,                 //月份
+      "d+": this.getDate(),                    //日
+      "h+": this.getHours(),                   //小时
+      "m+": this.getMinutes(),                 //分
+      "s+": this.getSeconds(),                 //秒
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+      "S": this.getMilliseconds()             //毫秒
+    };
+    if (/(y+)/.test(fmt))
+      fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt))
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+  }
   // layui方法
-  layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-
-    window.meiCar.get('/api/manage/user', {}, (result) => {
-      let users = result.obj;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      users.forEach((user) => {
-        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-      });
-      console.log($('#UserId'));
-      $('#UserId')[0].innerHTML = htmls.join();
-      form.render();
-    })
+  layui.use(['table', 'form', 'layer', 'vip_table', 'laydate'], function () {
+    const user = window.meiCar.getUser().user;
+    updateUser(user.ServiceProviderId);
+    function updateUser(providerId) {
+      window.meiCar.get('/api/manage/user', { UserType: 'staff', ServiceProviderId: providerId }, (result) => {
+        let users = result.obj;
+        let htmls = [`<option value="">请选择或输入搜索</option>`];
+        users.forEach((user) => {
+          htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+        });
+        console.log($('#StaffId'));
+        $('#StaffId')[0].innerHTML = htmls.join();
+      })
+    }
     // 操作对象
     var form = layui.form
       , table = layui.table
       , layer = layui.layer
       , vipTable = layui.vip_table
-      , $ = layui.jquery;
+      , $ = layui.jquery
+      , laydate = layui.laydate;
     // 表格渲染
     var tableIns = table.render({
       elem: '#dataTable'                  //指定原始表格元素选择器（推荐id选择器）
       , height: vipTable.getFullHeight()    //容器高度
       , cols: [[                  //标题栏
-        { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
+        { field: 'overId', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'Manage', title: '管理权限', width: 120, templet: '#dataTable_title' }
-        , { field: 'OpenId', title: 'OpenID', width: 120, }
-        , { field: 'NickName', title: '微信昵称', width: 120, }
-        , { field: 'LoginTime', title: '最后登录时间', width: 170 }
-        , { field: 'CreaTime', title: '创建时间', width: 170 }
+        , { field: 'Title', title: '月卡类型', width: 170, }
+        , { field: 'cardOverStatus', title: '订单状态', width: 170, templet: '#dataTable_cardOverStatus' }
+        , { field: 'StaffName', title: '服务人员', width: 120 }
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
       , url: '/api/provider/card/user'
       , method: 'get'
       , headers: window.meiCar.getPostHeader()
+      , where: { date: null }
       , parseData: function (res) { //res 即为原始返回的数据
         return {
           "code": res.success ? 0 : res.code, //解析接口状态
@@ -115,38 +123,42 @@
       , limit: 30 //默认采用30
       , loading: false
       , done: function (res, curr, count) {
-        //如果是异步请求数据方式，res即为你接口返回的信息。
-        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-        // console.log(res);
-        //
-        //得到当前页码
-        // console.log(curr);
-
-        //得到数据总量
-        // console.log(count);
       }
     });
+    // 日期渲染
+    var ins1 = laydate.render({
+      elem: '#currentDate', //指定元素
+      type: 'date',
+      max: new Date().Format('YYYY-MM-DD'),
+      done: function (value, date, endDate) {
+        tableIns.config.where.date = value
+      }
+    });
+
     table.on('tool(dataTable)', function (obj) {
       console.log(obj);
       switch (obj.event) {
-        case 'delete':
+        case 'addStaff':
           layer.open({
-            title: '删除管理员',
-            content: '你确认要删除吗?',
-            btn: ['确定', '取消'],
-            yes: (index, layero) => {
-              window.meiCar.userDelManage(obj.data.Id, () => {
+            title: '分配服务人员',
+            yes: function (index, layero) {
+              let data = {
+                StaffId: layero.find('#StaffId')[0].value,
+                OverId: obj.data.overId
+              };
+              if (!data.StaffId) {
+                return;
+              }
+              window.meiCar.post('/api/provider/card/addStaff', data, () => {
                 layer.close(index);
                 tableIns.reload();
               });
             },
-            btn2: (index, layero) => {
-              layer.close(index);
-            },
-          })
+            content: $("#layui-form").html()
+          });
+          form.render();
           break;
       }
-      ;
     });
 
     // 刷新
@@ -155,23 +167,6 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      // layer.open({
-      //   title: '添加管理员',
-      //   yes: function (index, layero) {
-      //     let data = {
-      //       UserId: layero.find('#UserId')[0].value,
-      //     };
-      //     if (!data.UserId) {
-      //       return;
-      //     }
-      //     window.meiCar.userAddManage(data, () => {
-      //       layer.close(index);
-      //       tableIns.reload();
-      //     });
-      //   },
-      //   content: $("#layui-form").html()
-      // })
-      //
       let data = {
         UserId: $('#UserId')[0].value,
       };
@@ -197,15 +192,23 @@
 </script>
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除管理员</button>
-    </div>
+    {{# if(d.cardOverStatus === '-1' && !d.StaffId){ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addStaff">分配服务人员</button>
+    {{# } else if(d.cardOverStatus === '0'){ }}
+    待评价
+    {{# } else if(d.cardOverStatus === '1'){ }}
+    已完成
+    {{# } }}
 </script>
-<script type="text/html" id="dataTable_title">
-    {{# if(d.Manage === 'manage'){ }}
-    管理员
-    {{# } else if(d.Manage === 'admin'){ }}
-    超级管理员
+<script type="text/html" id="dataTable_cardOverStatus">
+    {{# if(d.cardOverStatus === '-1' && !d.StaffId){ }}
+    未分配
+    {{# } else if(d.cardOverStatus === '-1'){ }}
+    待服务
+    {{# } else if(d.cardOverStatus === '0'){ }}
+    待评价
+    {{# } else if(d.cardOverStatus === '1'){ }}
+    已完成
     {{# } }}
 </script>
 </body>

@@ -38,6 +38,7 @@ export default (app: Application) => {
   router.put('/api/provider', authUser, userRequired, weapp, app.controller.provider.update); // 更新供应商
   router.get('/api/provider/report', authUser, userRequired, weapp, app.controller.provider.cardReport); // 供应商报表
   router.get('/api/provider/card/user', authUser, userRequired, weapp, app.controller.provider.cardUser); // 查看月卡用户
+  router.post('/api/provider/card/addStaff', authUser, userRequired, weapp, app.controller.provider.cardAddStaff); // 月卡指定完成员工
   router.post('/api/provider/card/over', authUser, userRequired, weapp, app.controller.provider.cardOver); // 完成月卡
   router.post('/api/provider/card/lookOver', authUser, userRequired, weapp, app.controller.provider.cardLookOver); // 查看月卡完成情况
   router.post('/api/provider/order/over', authUser, userRequired, weapp, app.controller.provider.orderOver); // 确认完成订单

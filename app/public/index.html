@@ -156,7 +156,10 @@
       // 主体菜单生成 [请求地址,过滤ID,是否展开,携带参数]
       // vipNav.main('./json/nav_main.json', 'side-main', true);
 
-      user.Manage = 'admin';
+
+      if (user.Manage === 'manage') {
+        user.Manage = 'admin';
+      }
       if (user.UserType === 'service' && user.Manage === 'manage') {
         vipNav.main('./json/service_and_manage.json', 'side-main', true);
       } else if (user.UserType === 'service' && user.Manage === 'admin') {
@@ -165,6 +168,8 @@
         vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
       } else if (user.Manage === 'admin' || user.Manage === 'manage') {
         vipNav.main(`./json/${user.Manage}_menu.json`, 'side-main', true);
+      } else if (user.UserType === 'staff') {
+        vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
       }
 
     });
