@@ -146,7 +146,6 @@
           })
           break;
       }
-      ;
     });
 
     // 刷新
@@ -155,23 +154,6 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      // layer.open({
-      //   title: '添加管理员',
-      //   yes: function (index, layero) {
-      //     let data = {
-      //       UserId: layero.find('#UserId')[0].value,
-      //     };
-      //     if (!data.UserId) {
-      //       return;
-      //     }
-      //     window.meiCar.userAddManage(data, () => {
-      //       layer.close(index);
-      //       tableIns.reload();
-      //     });
-      //   },
-      //   content: $("#layui-form").html()
-      // })
-      //
       let data = {
         UserId: $('#UserId')[0].value,
       };

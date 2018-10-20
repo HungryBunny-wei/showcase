@@ -46,7 +46,7 @@ export default (app: Application) => {
    */
   router.get('/api/manage/cardOrder', authUser, userRequired, weapp, app.controller.manage.orderCardIndex); // 获取所有月卡订单
   router.post('/api/manage/cardOrder/confirm', authUser, userRequired, weapp, app.controller.manage.orderCardConfirm); // 确认月卡
-  router.get('/api/manage/provider', authUser, userRequired, weapp, app.controller.manage.providerIndex); // 获取所有服务供应商
+  router.get('/api/manage/provider', authUser, userRequired, weapp, app.controller.manage.providerIndex); // 获取所有服务供应商 (无权限)
   router.post('/api/manage/provider', authUser, userRequired, weapp, app.controller.manage.providerAdd); // 添加服务供应商
   router.post('/api/manage/provider/confirm', authUser, userRequired, weapp, app.controller.manage.providerConfirm); // 确认供应商
   router.post('/api/manage/provider/refuse', authUser, userRequired, weapp, app.controller.manage.providerRefuse); // 确认供应商
