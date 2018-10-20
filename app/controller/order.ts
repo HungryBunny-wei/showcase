@@ -12,7 +12,7 @@ export default class CardController extends Controller {
    */
   public async save() {
     const localUser = this.ctx.locals.user;
-    const card = this.ctx.service.user.getCurrentCard(localUser.Id);
+    const card = await this.ctx.service.user.getCurrentCard(localUser.Id);
     if (!card) {
       throw ErrorService.RuntimeError('order.notCard');
     }
@@ -26,6 +26,7 @@ export default class CardController extends Controller {
     await this.ctx.service.weapp.sendAppointment(orderInfo);
     await this.ctx.app.typeorm.transaction(async (entityManage) => {
       await entityManage.save(orderInfo);
+      card.Num -= 1;
       await entityManage.save(card);
     });
     this.ctx.body = {
