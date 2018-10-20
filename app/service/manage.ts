@@ -51,6 +51,7 @@ export default class ManageService extends Service {
     userCardPackage.Max = 1;
     userCardPackage.ServiceProviderId = serviceProvider.Id;
     userCardPackage.ServiceProviderName = serviceProvider.Name;
+    userCardPackage.ServiceProviderAddress = serviceProvider.Address;
     userCardPackage.Days = 30;
     userCardPackage.OrderCardId = orderCard.Id;
     userCardPackage.BuyTime = orderCard.CreaTime;

@@ -45,7 +45,7 @@ export default (app: Application) => {
   /**
    * 员工接口
    */
-  router.get('/api/staff', authUser, userRequired, weapp, app.controller.provider.get); // 获取供应商
+  router.get('/api/staff/card/user', authUser, userRequired, weapp, app.controller.staff.cardUser); // 获取供应商
 
   /**
    * 管理接口

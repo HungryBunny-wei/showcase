@@ -9,6 +9,7 @@ import Home from '../../../app/controller/home';
 import Manage from '../../../app/controller/manage';
 import Order from '../../../app/controller/order';
 import Provider from '../../../app/controller/provider';
+import Staff from '../../../app/controller/staff';
 import User from '../../../app/controller/user';
 import Weapp from '../../../app/controller/weapp';
 
@@ -21,6 +22,7 @@ declare module 'egg' {
     manage: Manage;
     order: Order;
     provider: Provider;
+    staff: Staff;
     user: User;
     weapp: Weapp;
   }

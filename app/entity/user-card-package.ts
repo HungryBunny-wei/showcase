@@ -22,6 +22,8 @@ export class UserCardPackage extends Base {
   ServiceProviderId: number;
   @Column()
   ServiceProviderName: string;
+  @Column()
+  ServiceProviderAddress: string;
   @Column('int')
   Days: number;
   @Column('int')
