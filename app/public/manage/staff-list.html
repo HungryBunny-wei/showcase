@@ -49,6 +49,7 @@
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
     window.meiCar.get('/api/manage/provider', {Status: 1}, (result) => {
       let providers = result.obj;
+      window.providers = providers;
       let htmls = [`<option value="">请选择或输入搜索</option>`];
       providers.forEach((provider) => {
         htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
@@ -77,7 +78,7 @@
         { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'Manage', title: '管理权限', width: 120, templet: '#dataTable_title' }
+        , { field: 'provider', title: '所属服务商', width: 120, templet: '#dataTable_provider' }
         , { field: 'OpenId', title: 'OpenID', width: 120, }
         , { field: 'NickName', title: '微信昵称', width: 120, }
         , { field: 'LoginTime', title: '最后登录时间', width: 170 }
@@ -187,15 +188,12 @@
         <a class="layui-btn layui-btn-mini layui-btn-danger" lay-event="delete">删除服务人员</a>
     </div>
 </script>
-<script type="text/html" id="dataTable_title">
-    {{# if(d.Manage === 'manage'){ }}
-    管理员
-    {{# } else if(d.Manage === 'admin'){ }}
-    超级管理员
-    {{# } else { }}
-    无
+<script type="text/html" id="dataTable_provider">
+    {{# layui.each(window.providers, function(index,item){ }}
+    {{# if(d.ServiceProviderId == item.Id){ }}
+    {{ item.Name }}
     {{# } }}
-
+    {{# }); }}
 </script>
 </body>
 </html>

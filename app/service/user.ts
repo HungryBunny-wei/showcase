@@ -68,43 +68,53 @@ export default class UserService extends Service {
     const session = this.ctx.locals.session;
     const weappSession = this.ctx.locals.weappSession;
     const body = this.ctx.request.body;
-    const user = new User();
-    user.Name = body.Name;
-    user.UserType = 'user';
-    user.Manage = 'none';
-    user.Phone = body.Phone;
-    user.OpenId = weappSession.OpenId;
-    user.NickName = body.NickName;
-    user.AvatarUrl = body.AvatarUrl;
-    user.Birthday = body.Birthday;
-    user.LoginTime = new Date();
-    user.register = false;
-    const userCarInfo = new UserCarInfo();
-    userCarInfo.AddressName = body.site.AddressName;
-    userCarInfo.Address = body.site.Address;
-    userCarInfo.Latitude = body.site.Latitude;
-    userCarInfo.Longitude = body.site.Longitude;
-    userCarInfo.Brand = body.Brand;
-    userCarInfo.CarModel = body.CarModel;
-    userCarInfo.LicencePlate = body.LicencePlate;
-    userCarInfo.Motor = body.Motor;
-    // 系统字段
-    userCarInfo.Version = 1;
-    userCarInfo.IsNew = 1;
-
-    let orderCard;
-    if (body.CardId) {
-      const card = await this.ctx.service.card.findOne(body.CardId);
-      orderCard = new OrderCard();
-      orderCard.Status = OrderCardStatus.start;
-      orderCard.CardId = body.CardId;
-      orderCard.Title = card.Title;
-      orderCard.Explain = card.Explain;
-      orderCard.Price = card.Price;
-      orderCard.OriginalPrice = card.OriginalPrice;
-      orderCard.Max = card.Max;
-    }
+    let user;
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
+      const userRepo = transactionalEntityManager.getRepository(User);
+      user = await userRepo.findOne({
+        where: {
+          Phone: body.Phone,
+        },
+      });
+      if (!user) {
+        user = new User();
+      }
+      user.Name = body.Name;
+      user.UserType = user.UserType || 'user';
+      user.Manage = user.Manage || 'none';
+      user.Phone = body.Phone;
+      user.OpenId = weappSession.OpenId;
+      user.NickName = body.NickName;
+      user.AvatarUrl = body.AvatarUrl;
+      user.Birthday = body.Birthday;
+      user.LoginTime = new Date();
+      user.register = false;
+      const userCarInfo = new UserCarInfo();
+      userCarInfo.AddressName = body.site.AddressName;
+      userCarInfo.Address = body.site.Address;
+      userCarInfo.Latitude = body.site.Latitude;
+      userCarInfo.Longitude = body.site.Longitude;
+      userCarInfo.Brand = body.Brand;
+      userCarInfo.CarModel = body.CarModel;
+      userCarInfo.LicencePlate = body.LicencePlate;
+      userCarInfo.Motor = body.Motor;
+      // 系统字段
+      userCarInfo.Version = 1;
+      userCarInfo.IsNew = 1;
+
+      let orderCard;
+      if (body.CardId) {
+        const card = await this.ctx.service.card.findOne(body.CardId);
+        orderCard = new OrderCard();
+        orderCard.Status = OrderCardStatus.start;
+        orderCard.CardId = body.CardId;
+        orderCard.Title = card.Title;
+        orderCard.Explain = card.Explain;
+        orderCard.Price = card.Price;
+        orderCard.OriginalPrice = card.OriginalPrice;
+        orderCard.Max = card.Max;
+      }
+
       await transactionalEntityManager.save(user);
       userCarInfo.UserId = user.Id;
       await transactionalEntityManager.save(userCarInfo);
