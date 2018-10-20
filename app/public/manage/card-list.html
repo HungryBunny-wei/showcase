@@ -108,6 +108,7 @@
           if (!data.Title || !data.Price || !data.OriginalPrice || !data.Explain) {
             return;
           }
+          data.Explain = data.Explain.replace(/；/g,';');
           window.meiCar.post('/api/manage/card', data, () => {
             layer.close(index);
             tableIns.reload();
