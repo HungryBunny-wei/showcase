@@ -16,6 +16,8 @@ export class Card extends Base {
   Price: string; // 价格
   @Column('decimal')
   OriginalPrice: string; // 原价
+  @Column('int')
+  Max: number; // 原价
   @Column()
   Status: CardStatus;
 }

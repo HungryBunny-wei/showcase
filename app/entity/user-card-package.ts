@@ -37,7 +37,7 @@ export class UserCardPackage extends Base {
   @Column()
   Title: string; // 标题;
   @Column('longtext')
-  Explain: number; // 说明
+  Explain: string; // 说明
   @Column('decimal')
   Price: string; // 价格
   @Column('decimal')

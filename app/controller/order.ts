@@ -11,9 +11,11 @@ export default class CardController extends Controller {
    * 保存预约信息
    */
   public async save() {
-    const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
     const localUser = this.ctx.locals.user;
-
+    const card = this.ctx.service.user.getCurrentCard(localUser.Id);
+    if (!card) {
+      throw ErrorService.RuntimeError('order.notCard');
+    }
     const orderInfo = new OrderInfo();
     orderInfo.UserId = localUser.Id;
     orderInfo.Status = OrderInfoStatus.start;
@@ -22,7 +24,10 @@ export default class CardController extends Controller {
     orderInfo.ServiceProviderName = provider.Name;
     orderInfo.ServiceProviderAddress = provider.Address;
     await this.ctx.service.weapp.sendAppointment(orderInfo);
-    await orderInfoRepo.save(orderInfo);
+    await this.ctx.app.typeorm.transaction(async (entityManage) => {
+      await entityManage.save(orderInfo);
+      await entityManage.save(card);
+    });
     this.ctx.body = {
       success: true,
       obj: orderInfo,
@@ -77,6 +82,7 @@ export default class CardController extends Controller {
     orderCard.Explain = card.Explain;
     orderCard.Price = card.Price;
     orderCard.OriginalPrice = card.OriginalPrice;
+    orderCard.Max = card.Max;
     await orderCardRepo.save(orderCard);
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       /*
@@ -152,13 +158,13 @@ export default class CardController extends Controller {
     userCardPackage.UserId = localUser.Id;
     userCardPackage.StartTime = new Date();
     userCardPackage.EndTime = endTime;
-    userCardPackage.Max = 0;
-    userCardPackage.Num = 0;
     userCardPackage.CardId = orderCard.CardId;
     userCardPackage.Title = orderCard.Title;
     userCardPackage.Explain = orderCard.Explain;
     userCardPackage.Price = orderCard.Price;
     userCardPackage.OriginalPrice = orderCard.OriginalPrice;
+    userCardPackage.Max = orderCard.Max;
+    userCardPackage.Num = orderCard.Max;
     await userCardPackageRepo.save(userCardPackage);
     orderCard.Status = OrderCardStatus.confirm;
     await orderCardRepo.save(orderCard);

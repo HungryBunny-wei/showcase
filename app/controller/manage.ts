@@ -155,6 +155,7 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     const card = new Card();
     Object.assign(card, this.ctx.request.body);
     card.Status = CardStatus.enable;
+    card.Max = 1;
     await cardRepo.save(card);
     this.ctx.body = {
       success: true,
