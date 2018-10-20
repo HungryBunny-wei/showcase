@@ -20,6 +20,11 @@
           "href": "manage/user-list.html"
         },
         {
+          "text": "配置服务人员",
+          "icon": "&#xe638;",
+          "href": "manage/staff-list.html"
+        },
+        {
           "text": "配置服务商",
           "icon": "&#xe638;",
           "href": "manage/service-list.html"

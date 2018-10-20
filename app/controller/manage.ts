@@ -93,12 +93,27 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
   public async userAdd() {
     const user = new User();
     user.Password = await this.ctx.service.gen.bcryptPassword(this.ctx.request.body.Password);
-    user.Name = await this.ctx.request.body.Name;
+    user.Name = this.ctx.request.body.Name;
     user.Phone = this.ctx.request.body.Phone;
     user.UserType = 'user';
     user.Manage = 'none';
     user.register = true;
     await this.ctx.app.typeorm.getRepository(User).save(user);
+    this.ctx.body = {
+      success: true,
+      obj: user,
+    };
+  }
+
+  public async userUpdate() {
+    const user = new User();
+    if (this.ctx.request.body.Password) {
+      user.Password = await this.ctx.service.gen.bcryptPassword(this.ctx.request.body.Password);
+    }
+    user.Name = this.ctx.request.body.Name;
+    user.Phone = this.ctx.request.body.Phone;
+    user.UserType = this.ctx.request.body.UserType;
+    await this.ctx.app.typeorm.getRepository(User).update({Id: this.ctx.request.body.Id}, user);
     this.ctx.body = {
       success: true,
       obj: user,
@@ -171,6 +186,28 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     this.ctx.body = {
       success: true,
       obj: card,
+    };
+  }
+
+  public async staffAdd() {
+    const user = await this.ctx.service.user.findOne(this.ctx.request.body.UserId);
+    user.UserType = 'staff';
+    user.ServiceProviderId = this.ctx.request.body.ServiceProviderId;
+    await this.ctx.app.typeorm.getRepository(User).save(user);
+    this.ctx.body = {
+      success: true,
+      obj: user,
+    };
+  }
+
+  public async staffDel() {
+    const user = await this.ctx.service.user.findOne(this.ctx.request.body.UserId);
+    user.UserType = 'user';
+    user.ServiceProviderId = null as any;
+    await this.ctx.app.typeorm.getRepository(User).save(user);
+    this.ctx.body = {
+      success: true,
+      obj: user,
     };
   }
 }

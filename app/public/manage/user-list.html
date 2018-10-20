@@ -63,6 +63,35 @@
         </div>
     </form>
 </div>
+<!--编辑管理员-->
+<div id="layui-form-update" style="display: none;">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input id="Name" type="text" name="Name" required autocomplete="off"
+                       placeholder="请输入名称"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机</label>
+            <div class="layui-input-block">
+                <input id="Phone" type="tel" name="Phone" placeholder="将用来登录账号"
+                       autocomplete="new-password"
+                       class="layui-input" autocapitalize="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input id="Password" type="password" name="Password" required
+                       autocomplete="new-password" placeholder="不填就不修改密码"
+                       class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
 <script type="text/javascript" src="../frame/layui/layui.js"></script>
 <script type="text/javascript" src="../js/index.js"></script>
 <script type="text/javascript" src="../js/common.js"></script>
@@ -85,9 +114,11 @@
         {field: 'Id', title: 'ID', width:80, fixed: 'left'}
         ,{field: 'Phone', title: '手机号', width:120}
         ,{field: 'Name', title: '用户名', width:120}
-        ,{field: 'Manage', title: '管理权限', width:120, templet: '#dataTable_title'}
         ,{field: 'OpenId', title: 'OpenID', width:120,}
         ,{field: 'NickName', title: '微信昵称', width:120,}
+        ,{field: 'UserType', title: '用户类型', width:120, templet: '#dataTable_userType'}
+        ,{field: 'Manage', title: '管理权限', width:120, templet: '#dataTable_title'}
+        ,{field: 'Password', title: '密码状况', width:120, templet: '#dataTable_password'}
         ,{field: 'LoginTime', title: '最后登录时间', width:170}
         ,{field: 'CreaTime', title: '创建时间', width:170}
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
@@ -124,21 +155,30 @@
     table.on('tool(dataTable)', function(obj){
       console.log(obj);
       switch(obj.event){
-        case 'delete':
+        case 'edit':
           layer.open({
-            title: '删除管理员',
-            content:'你确认要删除吗?',
-            btn:['确定','取消'],
-            yes: (index, layero) => {
-              window.meiCar.userDelManage(obj.data.Id, () => {
+            title: '修改服务商',
+            yes: function (index, layero) {
+              let data = {
+                Password: layero.find('#Password')[0].value,
+                Name: layero.find('#Name')[0].value,
+                Phone: layero.find('#Phone')[0].value,
+              };
+              if (!data.Name || !data.Phone) {
+                return;
+              }
+              Object.assign(obj.data, data);
+              window.meiCar.put('/api/manage/user', obj.data, () => {
                 layer.close(index);
                 tableIns.reload();
               });
             },
-            btn2:(index,layero)=>{
-              layer.close(index);
+            success: function(layero, index){
+              layero.find('#Name')[0].value = obj.data.Name;
+              layero.find('#Phone')[0].value = obj.data.Phone;
             },
-          })
+            content: $("#layui-form-update").html()
+          });
           break;
       };
     });
@@ -182,8 +222,11 @@
 </script>
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
-    <div class="layui-btn-container">
-    </div>
+        {{# if(d.Manage === 'manage' || d.Manage === 'admin'){ }}
+         管理员不可编辑
+        {{# } else { }}
+         <a class="layui-btn layui-btn-mini layui-btn-normal" lay-event="edit">编辑</a>
+        {{# } }}
 </script>
 <script type="text/html" id="dataTable_title">
     {{# if(d.Manage === 'manage'){ }}
@@ -193,7 +236,24 @@
     {{# } else { }}
     无
     {{# } }}
-
+</script>
+<script type="text/html" id="dataTable_userType">
+    {{# if(d.UserType === 'user'){ }}
+    普通用户
+    {{# } else if(d.UserType === 'service'){ }}
+    服务商
+    {{# } else if(d.UserType === 'staff'){ }}
+    服务商员工
+    {{# } else { }}
+    无
+    {{# } }}
+</script>
+<script type="text/html" id="dataTable_password">
+    {{# if(d.Password){ }}
+    正常
+    {{# } else { }}
+    未初始化密码
+    {{# } }}
 </script>
 </body>
 </html>

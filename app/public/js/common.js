@@ -170,6 +170,7 @@ MeiCar.prototype.checkLogin = function (call) {
     if (window.localStorage.getItem(MeiCar.prototype.LOGIN_SESSING)) {
       this.get('/api/user/queryAll', {}, (result) => {
         call(result.obj);
+        this.user = result.obj;
         window.sessionStorage.setItem('meiyou.userInfo', JSON.stringify(result.obj));
       }, () => {
         window.location.href = './login.html';

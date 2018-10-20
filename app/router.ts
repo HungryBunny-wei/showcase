@@ -42,6 +42,11 @@ export default (app: Application) => {
   router.post('/api/provider/card/lookOver', authUser, userRequired, weapp, app.controller.provider.cardLookOver); // 查看月卡完成情况
   router.post('/api/provider/order/over', authUser, userRequired, weapp, app.controller.provider.orderOver); // 确认完成订单
   /**
+   * 员工接口
+   */
+  router.get('/api/staff', authUser, userRequired, weapp, app.controller.provider.get); // 获取供应商
+
+  /**
    * 管理接口
    */
   router.get('/api/manage/cardOrder', authUser, userRequired, weapp, app.controller.manage.orderCardIndex); // 获取所有月卡订单
@@ -53,6 +58,7 @@ export default (app: Application) => {
   router.post('/api/manage/provider/del', authUser, userRequired, weapp, app.controller.manage.providerDel); // 删除供应商
   router.get('/api/manage/user', authUser, userRequired, weapp, app.controller.manage.userIndex); // 查询用户
   router.post('/api/manage/user', authUser, userRequired, weapp, app.controller.manage.userAdd); // 添加用户
+  router.put('/api/manage/user', authUser, userRequired, weapp, app.controller.manage.userUpdate); // 修改用户
   router.post('/api/manage/user/resetPassword', authUser, userRequired, weapp, app.controller.manage.resetPassword); // 管理员重置用户密码
   router.get('/api/manage/user/manage', authUser, userRequired, weapp, app.controller.manage.userManage); // 查询管理员
   router.post('/api/manage/user/manage', authUser, userRequired, weapp, app.controller.manage.userAddManage); // 添加管理员
@@ -61,6 +67,8 @@ export default (app: Application) => {
   router.get('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardIndex); // 查询月卡
   router.post('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardSave); // 新增月卡
   router.put('/api/manage/card', authUser, userRequired, weapp, app.controller.manage.cardUpdate); // 更新月卡
+  router.post('/api/manage/staff/add', authUser, userRequired, weapp, app.controller.manage.staffAdd); // 添加服务人员
+  router.post('/api/manage/staff/del', authUser, userRequired, weapp, app.controller.manage.staffDel); // 更新月卡
 
   /**
    * 通用接口

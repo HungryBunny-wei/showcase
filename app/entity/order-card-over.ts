@@ -16,6 +16,8 @@ export class OrderCardOver extends Base {
   UserCardPackageId: number;
   @Column('int')
   UserId: number;
+  @Column('int', {nullable: true})
+  StaffId: number; // 员工Id
   @Column({type: 'int'})
   ServiceProviderId: number;
   @Column()
