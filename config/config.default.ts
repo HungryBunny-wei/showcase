@@ -10,15 +10,6 @@ export default (appInfo: EggAppInfo) => {
   // add your egg config in here
   config.middleware = [];
 
-  config.redis = {
-    client: {
-      host: '120.77.240.193',
-      // host: '47.105.84.128',
-      port: '6379',
-      password: 'rabbit-redis',
-      db: '0',
-    },
-  };
   config.middleware = ['locals'];
 
   config.weappSDK = {
