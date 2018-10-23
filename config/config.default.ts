@@ -9,15 +9,11 @@ export default (appInfo: EggAppInfo) => {
   config.redis = {
     client: {
       host: '120.77.240.193',
-      // host: '47.105.84.128',
       port: '6379',
-      // password: 'rabbit-redis',
       password: '',
       db: '0',
     },
   };
-  // add your egg config in here
-  config.middleware = [];
 
   config.middleware = ['locals'];
 
@@ -58,7 +54,6 @@ export default (appInfo: EggAppInfo) => {
   config.security = {
     csrf: {
       ignore: ['/api/gen', '/api/user/login'],
-      // ignore: '/api/gen',
       ignoreJSON: true, // 默认为 false，当设置为 true 时，将会放过所有 content-type 为 `application/json` 的请求
       queryName: '_csrf', // 通过 query 传递 CSRF token 的默认字段为 _csrf
       bodyName: '_csrf', // 通过 body 传递 CSRF token 的默认字段为 _csrf

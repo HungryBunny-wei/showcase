@@ -76,18 +76,15 @@
 
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    console.log(window.meiCar.getUser());
-    const updateUser = function (providerId){
-      window.meiCar.get('/api/manage/user', { UserType: 'staff' , ServiceProviderId: providerId}, (result) => {
-        let users = result.obj;
-        let htmls = [`<option value="">请选择或输入搜索</option>`];
-        users.forEach((user) => {
-          htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-        });
-        console.log($('#UserId'));
-        $('#UserId')[0].innerHTML = htmls.join();
-      })
-    }
+    window.meiCar.get('/api/manage/user', { UserType: 'user'}, (result) => {
+      let users = result.obj;
+      let htmls = [`<option value="">请选择或输入搜索</option>`];
+      users.forEach((user) => {
+        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+      });
+      console.log($('#UserId'));
+      $('#UserId')[0].innerHTML = htmls.join();
+    })
     // 操作对象
     var form = layui.form
       , table = layui.table

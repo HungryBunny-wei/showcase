@@ -22,7 +22,6 @@ export default (app) => {
     const typeormConfig = await app.config.typeorm;
     // 动态创建 MySQL 实例
     app.typeorm = await createConnection(typeormConfig);
-
     await app.redis.del('weapp-access-token');
   });
 };
