@@ -4,6 +4,11 @@
       "text": "月卡服务订单",
       "icon": "&#xe638;",
       "href": "service/card-list.html"
+    },
+    {
+      "text": "预约洗尘订单",
+      "icon": "&#xe638;",
+      "href": "service/order-list.html"
     }
   ]
 }

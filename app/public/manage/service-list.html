@@ -82,7 +82,6 @@
       users.forEach((user) => {
         htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
       });
-      console.log($('#UserId'));
       $('#UserId')[0].innerHTML = htmls.join();
     })
     // 操作对象
@@ -201,7 +200,7 @@
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">分配人员</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除服务商</button>
     </div>
 </script>
 <script type="text/html" id="dataTable_status">

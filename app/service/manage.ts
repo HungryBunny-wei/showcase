@@ -34,13 +34,15 @@ export default class ManageService extends Service {
     }
     // 更新用户信息
     const user = await this.ctx.service.user.findOne(orderCard.UserId);
-    const card = await userCardPackageRepo.findOne({
+    const card = await userCardPackageRepo.find({
       where: {
         Days: MoreThan(0),
         UserId: user.Id,
       },
     });
-    const add = card ? card.Days : 0;
+    const add = card.map((c) => c.Days).reduce((pre, cur) => {
+      return pre + cur;
+    });
     // 更新用户月卡
     const userCardPackage = new UserCardPackage();
     const serviceProvider = await this.ctx.service.provider.findOne(body.Provider);

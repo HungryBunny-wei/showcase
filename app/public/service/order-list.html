@@ -16,20 +16,13 @@
 <!-- 工具集 -->
 <div class="my-btn-box">
     <span class="fl">
-    <form class="layui-form" action="">
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#xe669;</i></a>
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#xe669;</i></a>
+                </div>
             </div>
-        </div>
-    </form>
-    </span>
-    <span class="fr">
-        <span class="layui-form-label">选择日期：</span>
-        <div class="layui-input-inline">
-            <input type="text" class="layui-input" id="currentDate">
-        </div>
-        <button class="layui-btn mgl-20">查询</button>
+        </form>
     </span>
 </div>
 
@@ -105,7 +98,7 @@
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
-      , url: '/api/provider/card/user'
+      , url: '/api/order'
       , method: 'get'
       , headers: window.meiCar.getPostHeader()
       , where: { date: null }
