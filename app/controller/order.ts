@@ -39,7 +39,7 @@ export default class CardController extends Controller {
     const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
 
     const localUser = this.ctx.locals.user;
-    const orderInfo = await orderInfoRepo.find({where: {UserId: localUser.Id}, order: {CreaTime: 'DESC'}});
+    const orderInfo = await orderInfoRepo.find({where: {ServiceProviderId: localUser.ServiceProviderId}, order: {CreaTime: 'DESC'}});
     this.ctx.body = {
       success: true,
       obj: orderInfo,

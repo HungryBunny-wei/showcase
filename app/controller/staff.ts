@@ -1,5 +1,6 @@
 import {Controller} from 'egg';
 import * as moment from 'moment';
+import {OrderCardOverStatus} from '../entity/order-card-over';
 
 export default class ProviderController extends Controller {
 
@@ -44,4 +45,34 @@ WHERE cardOver.ServiceProviderId = ? and cardOver.CreaTime > ? and cardOver.Crea
       obj: await this.ctx.app.typeorm.query(sql, [this.ctx.locals.user.ServiceProviderId, date, tomorrow, this.ctx.locals.user.Id]),
     };
   }
+  public async cardReport() {
+    const sql = `
+select ordercardover.Status,ordercardover.Score from order_card_over as ordercardover
+left join User_CardPackage as usercard
+  on ordercardover.UserCardPackageId = usercard.Id
+where usercard.Type = 0 and ordercardover.ServiceProviderId = ? and ordercardover.StaffId = ?
+    `;
+    const overList: any[] = await this.ctx.app.typeorm.query(sql,
+      [this.ctx.locals.user.ServiceProviderId, this.ctx.locals.user.Id]);
+    let confirmSum = 0;
+    let score = 0;
+    for (const _over of overList) {
+      if (_over.Status.toString() === OrderCardOverStatus.confirm.toString()) {
+        confirmSum++;
+        if (_over.Score) {
+          score += _over.Score;
+        }
+      }
+    }
+    this.ctx.body = {
+      success: true,
+      obj: {
+        over: overList.length, // 订单数量
+        confirm: confirmSum, // 客户确认数量
+        overRatio: confirmSum / overList.length, // 完成比率 (订单数量/客户确认数量)
+        scoreRatio: score / (confirmSum * 5), // 好评率
+      },
+    };
+  }
+
 }
