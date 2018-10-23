@@ -6,7 +6,16 @@ export default (appInfo: EggAppInfo) => {
   // override config from framework / plugin
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1536946665193_6387';
-
+  config.redis = {
+    client: {
+      host: '120.77.240.193',
+      // host: '47.105.84.128',
+      port: '6379',
+      // password: 'rabbit-redis',
+      password: '',
+      db: '0',
+    },
+  };
   // add your egg config in here
   config.middleware = [];
 
