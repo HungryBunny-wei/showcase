@@ -42,11 +42,11 @@ export default class ManageService extends Service {
     });
     const add = card.map((c) => c.Days).reduce((pre, cur) => {
       return pre + cur;
-    });
+    }, 0);
     // 更新用户月卡
     const userCardPackage = new UserCardPackage();
     const serviceProvider = await this.ctx.service.provider.findOne(body.Provider);
-    userCardPackage.StartTime = moment().add(add , 'days').toDate();
+    userCardPackage.StartTime = moment().add(add, 'days').toDate();
     userCardPackage.EndTime = moment().add(add + 30, 'days').toDate();
     userCardPackage.UserId = user.Id;
     userCardPackage.Num = 1;
