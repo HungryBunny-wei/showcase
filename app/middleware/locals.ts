@@ -16,8 +16,11 @@ export default function localsMiddleware() {
       if (ctx.locals.user) {
         const user = ctx.locals.user;
         ctx.logger.info(`[${user.Name}][${user.Id}]`);
+      } else {
+        ctx.logger.info(``);
       }
     } catch (e) {
+      ctx.logger.error(e);
       if (e instanceof ErrorService) {
         e.setContext(ctx);
       } else {
@@ -31,7 +34,6 @@ export default function localsMiddleware() {
           };
         }
       }
-      ctx.logger.error(e);
     }
   };
 }
