@@ -184,4 +184,64 @@ MeiCar.prototype.getUser = function () {
   return JSON.parse(window.sessionStorage.getItem('meiyou.userInfo'));
 }
 
+function MeiHttp(){
+
+}
+MeiHttp.prototype.post = function(url, body, option = {}){
+  const errMess = option.errMess || true;
+  return new Promise((resolve, reject)=>{
+    layui.use(['layer'], () => {
+      let layer = layui.layer
+        , $ = layui.jquery;
+      $.ajax({
+        url: url,
+        headers: window.meiCar.getPostHeader(),
+        data: body,
+        method: 'POST',
+        success: function (result) {
+          resolve(result)
+        },
+        error: function (responseStr, a) {
+          if (errMess) {
+            reject(responseStr);
+          } else {
+            layer.alert(responseStr.responseJSON.message, {
+              title: '请求失败'
+            });
+            reject(responseStr);
+          }
+        }
+      });
+    })
+  })
+}
+MeiHttp.prototype.get = function(url, body, option = {}){
+  const errMess = option.errMess || true;
+  return new Promise((resolve, reject)=>{
+    layui.use(['layer'], () => {
+      let layer = layui.layer
+        , $ = layui.jquery;
+      $.ajax({
+        url: url,
+        headers: window.meiCar.getPostHeader(),
+        data: body,
+        method: 'GET',
+        success: function (result) {
+          resolve(result)
+        },
+        error: function (responseStr, a) {
+          if (errMess) {
+            reject(responseStr);
+          } else {
+            layer.alert(responseStr.responseJSON.message, {
+              title: '请求失败'
+            });
+            reject(responseStr);
+          }
+        }
+      });
+    })
+  })
+}
 window.meiCar = new MeiCar();
+window.meiHttp = new MeiHttp();

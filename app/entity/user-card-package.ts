@@ -1,11 +1,6 @@
 import {Column, Entity} from 'typeorm';
 import {Base} from './base';
 
-export enum MonthCardType {
-  vip = '0', // 高级会员
-  singleDouble = '1', // 单双月会员
-}
-
 @Entity('User_CardPackage')
 export class UserCardPackage extends Base {
   @Column('datetime')

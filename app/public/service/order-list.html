@@ -89,12 +89,12 @@
       elem: '#dataTable'                  //指定原始表格元素选择器（推荐id选择器）
       , height: vipTable.getFullHeight()    //容器高度
       , cols: [[                  //标题栏
-        { field: 'overId', title: 'ID', width: 80, fixed: 'left' }
+        { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'Title', title: '月卡类型', width: 170, }
-        , { field: 'cardOverStatus', title: '订单状态', width: 170, templet: '#dataTable_cardOverStatus' }
-        , { field: 'StaffName', title: '服务人员', width: 120 }
+        , { field: 'Status', title: '预约状态', width: 170, templet: '#dataTable_status'}
+        , { field: 'StartTime', title: '预约时间', width: 170,}
+        , { field: 'StartTimeSlot', title: '预约时间段', width: 170, }
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
@@ -185,22 +185,16 @@
 </script>
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
-    {{# if(d.cardOverStatus === '-1' && !d.StaffId){ }}
-    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addStaff">分配服务人员</button>
-    {{# } else if(d.cardOverStatus === '0'){ }}
-    待评价
-    {{# } else if(d.cardOverStatus === '1'){ }}
+    {{# if(d.Status == '0'){ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addStaff">完成预约</button>
+    {{# } else if(d.Status == '1'){ }}
     已完成
     {{# } }}
 </script>
-<script type="text/html" id="dataTable_cardOverStatus">
-    {{# if(d.cardOverStatus === '-1' && !d.StaffId){ }}
-    未分配
-    {{# } else if(d.cardOverStatus === '-1'){ }}
-    待服务
-    {{# } else if(d.cardOverStatus === '0'){ }}
-    待评价
-    {{# } else if(d.cardOverStatus === '1'){ }}
+<script type="text/html" id="dataTable_status">
+    {{# if(d.Status == '0'){ }}
+    预约中
+    {{# } else if(d.Status == '1'){ }}
     已完成
     {{# } }}
 </script>

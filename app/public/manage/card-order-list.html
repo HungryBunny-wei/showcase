@@ -40,14 +40,19 @@
 
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    window.meiCar.get('/api/manage/provider', {}, (result) => {
-      let providers = result.obj;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      providers.forEach((provider) => {
-        htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
+    function renderProvider(){
+      return new Promise((resolve, reject)=>{
+        window.meiCar.get('/api/manage/provider', {}, (result) => {
+          let providers = result.obj;
+          let htmls = [`<option value="">请选择或输入搜索</option>`];
+          providers.forEach((provider) => {
+            htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
+          });
+          $('#ServiceProviderId')[0].innerHTML = htmls.join();
+          resolve();
+        });
       });
-      $('#ServiceProviderId')[0].innerHTML = htmls.join();
-    })
+    }
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -63,8 +68,10 @@
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
         , { field: 'Title', title: '月卡类型', width: 170, }
-        , { field: 'Address', title: '地址', width: 170, }
+        , { field: 'Address', title: '车辆地址', width: 170, }
         , { field: 'Status', title: '状态', width: 80, templet: '#dataTable_status' }
+        , { field: 'ServiceProviderName', title: '服务商名称', width: 170,}
+        , { field: 'ServiceProviderAddress', title: '服务商地址', width: 170,}
         , { field: 'CreaTime', title: '申请时间', width: 170 }
         , { field: 'ConfirmTime', title: '确认时间', width: 170 }
         , { fixed: 'right', title: '操作', width: 120, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
@@ -87,50 +94,36 @@
       , limit: 30 //默认采用30
       , loading: false
       , done: function (res, curr, count) {
-        //如果是异步请求数据方式，res即为你接口返回的信息。
-        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-        console.log(res);
-
-        //得到当前页码
-        console.log(curr);
-
-        //得到数据总量
-        console.log(count);
       }
-    });
-
-    // 获取选中行
-    table.on('checkbox(dataCheck)', function (obj) {
-      layer.msg('123');
-      console.log(obj.checked); //当前是否选中状态
-      console.log(obj.data); //选中行的相关数据
-      console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
     });
     table.on('tool(dataTable)', function (obj) {
       switch (obj.event) {
         case 'confirm':
-          layer.open({
-            title: '确认订单',
-            btn: ['确定', '取消'],
-            yes: (index, layero) => {
-              let data = {
-                Id:obj.data.Id,
-                Provider: layero.find('#ServiceProviderId')[0].value,
-              };
-              if (!data.Id || !data.Provider) {
-                return;
-              }
-              window.meiCar.post('/api/manage/cardOrder/confirm', data, () => {
+          renderProvider().then(()=>{
+            layer.open({
+              title: '确认订单',
+              btn: ['确定', '取消'],
+              area: ['650px', '450px'],
+              yes: (index, layero) => {
+                let data = {
+                  Id:obj.data.Id,
+                  Provider: layero.find('#ServiceProviderId')[0].value,
+                };
+                if (!data.Id || !data.Provider) {
+                  return;
+                }
+                window.meiCar.post('/api/manage/cardOrder/confirm', data, () => {
+                  layer.close(index);
+                  tableIns.reload();
+                });
+              },
+              btn2: (index, layero) => {
                 layer.close(index);
-                tableIns.reload();
-              });
-            },
-            btn2: (index, layero) => {
-              layer.close(index);
-            },
-            content: $("#layui-form").html()
+              },
+              content: $("#layui-form").html()
+            });
+            form.render();
           });
-          form.render();
           break;
       }
     });

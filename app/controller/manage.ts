@@ -1,18 +1,27 @@
 import {Controller} from 'egg';
-import {User} from '../entity/user';
-import {ServiceProvider, ServiceProviderStatus} from '../entity/service-provider';
 import {Card, CardStatus} from '../entity/card';
+import {ServiceProvider, ServiceProviderStatus} from '../entity/service-provider';
+import {User} from '../entity/user';
 
 export default class ManageController extends Controller {
 
   public async orderCardIndex() {
     // const repo: Repository<OrderCard> = this.ctx.app.typeorm.getRepository(OrderCard);
     const sql = `
-    select orderCard.*,userCarInfo.Address,userCarInfo.AddressName,user.Name,user.Phone from order_card as orderCard
+    select orderCard.*,
+           userCarInfo.Address,
+           userCarInfo.AddressName,
+           user.Name,
+           user.Phone,
+           userCard.ServiceProviderName, 
+           userCard.ServiceProviderAddress 
+      from order_card as orderCard
     left join User_CarInfo as userCarInfo
       on orderCard.UserId = userCarInfo.UserId and userCarInfo.IsNew = 1
     left join User as user
       on orderCard.UserId = user.Id
+    left join User_CardPackage as userCard
+      on orderCard.Id = userCard.OrderCardId
     `;
     this.ctx.body = {
       success: true,

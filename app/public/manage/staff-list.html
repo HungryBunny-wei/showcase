@@ -26,7 +26,7 @@
 <!--新增服务人员-->
 <div id="layui-form" style="display: none;">
     <form class="layui-form" action="">
-        <div class="layui-inline">
+        <div class="layui-form-item">
             <label class="layui-form-label">选择用户</label>
             <div class="layui-input-block">
                 <select id="UserId" name="UserId" lay-verify="required" lay-search>
@@ -47,23 +47,36 @@
 <script type="text/javascript">
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    window.meiCar.get('/api/manage/provider', {Status: 1}, (result) => {
-      let providers = result.obj;
-      window.providers = providers;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      providers.forEach((provider) => {
-        htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
+    function renderProvider(){
+      return new Promise((resolve, reject)=>{
+        let index = 0;
+        window.meiHttp.get('/api/manage/provider', {Status: 1}).then((result)=>{
+          let providers = result.obj;
+          window.providers = providers;
+          let htmls = [`<option value="">请选择或输入搜索</option>`];
+          providers.forEach((provider) => {
+            htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
+          });
+          $('#ServiceProviderId')[0].innerHTML = htmls.join();
+          index++;
+          if(index === 2){
+            resolve();
+          }
+        });
+        window.meiCar.get('/api/manage/user', { UserType: 'user', Manage: 'none' }, (result) => {
+          let users = result.obj;
+          let htmls = [`<option value="">请选择或输入搜索</option>`];
+          users.forEach((user) => {
+            htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+          });
+          $('#UserId')[0].innerHTML = htmls.join();
+          index++;
+          if(index === 2){
+            resolve();
+          }
+        });
       });
-      $('#ServiceProviderId')[0].innerHTML = htmls.join();
-    });
-    window.meiCar.get('/api/manage/user', { UserType: 'user', Manage: 'none' }, (result) => {
-      let users = result.obj;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      users.forEach((user) => {
-        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-      });
-      $('#UserId')[0].innerHTML = htmls.join();
-    });
+    }
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -143,32 +156,35 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      layer.open({
-        title: '添加服务人员',
-        yes: function (index, layero) {
-          let data = {
-            UserId: layero.find('#UserId')[0].value,
-            ServiceProviderId: layero.find('#ServiceProviderId')[0].value,
-          };
-          if (!data.UserId || !data.ServiceProviderId) {
-            return;
-          }
-          window.meiCar.post('/api/manage/staff/add', data, () => {
-            layer.close(index);
-            tableIns.reload();
-            window.meiCar.get('/api/manage/user', { UserType: 'user', Manage: 'none' }, (result) => {
-              let users = result.obj;
-              let htmls = [`<option value="">请选择或输入搜索</option>`];
-              users.forEach((user) => {
-                htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+      renderProvider().then(()=>{
+        layer.open({
+          title: '添加服务人员',
+          area: ['650px', '450px'],
+          yes: function (index, layero) {
+            let data = {
+              UserId: layero.find('#UserId')[0].value,
+              ServiceProviderId: layero.find('#ServiceProviderId')[0].value,
+            };
+            if (!data.UserId || !data.ServiceProviderId) {
+              return;
+            }
+            window.meiCar.post('/api/manage/staff/add', data, () => {
+              layer.close(index);
+              tableIns.reload();
+              window.meiCar.get('/api/manage/user', { UserType: 'user', Manage: 'none' }, (result) => {
+                let users = result.obj;
+                let htmls = [`<option value="">请选择或输入搜索</option>`];
+                users.forEach((user) => {
+                  htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+                });
+                $('#UserId')[0].innerHTML = htmls.join();
               });
-              $('#UserId')[0].innerHTML = htmls.join();
             });
-          });
-        },
-        content: $("#layui-form").html()
-      });
-      form.render();
+          },
+          content: $("#layui-form").html()
+        });
+        form.render();
+      })
     });
     // 添加按钮(提交)
     form.on('submit(add)', function (data) {

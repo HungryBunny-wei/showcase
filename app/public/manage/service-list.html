@@ -76,14 +76,19 @@
 
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    window.meiCar.get('/api/manage/user', { UserType: 'user'}, (result) => {
-      let users = result.obj;
-      let htmls = [`<option value="">请选择或输入搜索</option>`];
-      users.forEach((user) => {
-        htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-      });
-      $('#UserId')[0].innerHTML = htmls.join();
-    })
+    function renderUser(){
+      return new Promise((resolve)=>{
+        window.meiCar.get('/api/manage/user', { UserType: 'user'}, (result) => {
+          let users = result.obj;
+          let htmls = [`<option value="">请选择或输入搜索</option>`];
+          users.forEach((user) => {
+            htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+          });
+          $('#UserId')[0].innerHTML = htmls.join();
+          resolve();
+        })
+      })
+    }
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -123,15 +128,6 @@
       , limit: 30 //默认采用30
       , loading: false
       , done: function (res, curr, count) {
-        //如果是异步请求数据方式，res即为你接口返回的信息。
-        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-        // console.log(res);
-        //
-        //得到当前页码
-        // console.log(curr);
-
-        //得到数据总量
-        // console.log(count);
       }
     });
     table.on('tool(dataTable)', function (obj) {
@@ -154,7 +150,6 @@
           })
           break;
       }
-      ;
     });
 
     // 刷新
@@ -163,26 +158,29 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      layer.open({
-        title: '添加服务商',
-        yes: function (index, layero) {
-          let data = {
-            UserId: layero.find('#UserId')[0].value,
-            Name: layero.find('#Name')[0].value,
-            Phone: layero.find('#Phone')[0].value,
-            Address: layero.find('#Address')[0].value,
-          };
-          if (!data.UserId || !data.Name || !data.Phone || !data.Address) {
-            return;
-          }
-          window.meiCar.post('/api/manage/provider', data, () => {
-            layer.close(index);
-            tableIns.reload();
-          });
-        },
-        content: $("#layui-form").html()
-      });
-      form.render();
+      renderUser().then(()=>{
+        layer.open({
+          title: '添加服务商',
+          area: ['650px', '450px'],
+          yes: function (index, layero) {
+            let data = {
+              UserId: layero.find('#UserId')[0].value,
+              Name: layero.find('#Name')[0].value,
+              Phone: layero.find('#Phone')[0].value,
+              Address: layero.find('#Address')[0].value,
+            };
+            if (!data.UserId || !data.Name || !data.Phone || !data.Address) {
+              return;
+            }
+            window.meiCar.post('/api/manage/provider', data, () => {
+              layer.close(index);
+              tableIns.reload();
+            });
+          },
+          content: $("#layui-form").html()
+        });
+        form.render();
+      })
     });
     // 添加按钮(提交)
     form.on('submit(add)', function (data) {

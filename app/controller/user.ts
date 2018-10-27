@@ -65,33 +65,6 @@ export default class UserController extends Controller {
 
   public async cardLookOver() {
     const localuser = this.ctx.locals.user;
-    /*const userCardPackageRepo: Repository<UserCardPackage> = this.ctx.app.typeorm.getRepository(UserCardPackage);
-    const orderCardOverRepo: Repository<OrderCardOver> = this.ctx.app.typeorm.getRepository(OrderCardOver);
-    let userCardPack;
-    let provider;
-
-    let date: string;
-    if (this.ctx.query.date) {
-      date = moment(this.ctx.query.date).hours(0).minutes(0).seconds(0).milliseconds(0).toDate().toString();
-    } else {
-      date = moment().hours(0).minutes(0).seconds(0).milliseconds(0).toDate().toString();
-    }
-    const tomorrow = moment(date).add('days', 1).toDate().toString();
-    const orderCardOver = await orderCardOverRepo.createQueryBuilder()
-      .where('UserId = :UserId and CreaTime > :toDay and CreaTime < :tomorrow', {
-        UserId: localuser.Id,
-        toDay: date,
-        tomorrow,
-      }).getOne();
-    if (orderCardOver) {
-      userCardPack = await userCardPackageRepo.findOne({
-        where: {
-          Id: orderCardOver.UserCardPackageId,
-        },
-      });
-      provider = await this.ctx.service.provider.findOne(userCardPack.ServiceProviderId);
-    }*/
-
     this.ctx.body = {
       success: true,
       obj: await this.ctx.service.user.cardLookOver(localuser.Id, this.ctx.query.date),
