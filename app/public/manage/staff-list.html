@@ -63,7 +63,7 @@
             resolve();
           }
         });
-        window.meiCar.get('/api/manage/user', { StaffFlag: false }, (result) => {
+        window.meiCar.get('/api/manage/user', { StaffFlag: 0 }, (result) => {
           let users = result.obj;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
           users.forEach((user) => {
@@ -103,7 +103,7 @@
       , url: '/api/manage/user'
       , method: 'get'
       , headers: window.meiCar.getPostHeader()
-      , where: { StaffFlag: true }
+      , where: { StaffFlag: 1 }
       , parseData: function (res) { //res 即为原始返回的数据
         return {
           "code": res.success ? 0 : res.code, //解析接口状态
