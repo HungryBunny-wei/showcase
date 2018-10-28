@@ -22,6 +22,7 @@ export default class UserController extends Controller {
       if (!code) {
         throw ErrorService.RuntimeError('user.codeIsNotNull');
       }
+      this.ctx.logger.info('登录:', code);
       this.ctx.body = await this.ctx.service.user.weappLogin(code, NickName, AvatarUrl);
     }
   }

@@ -39,15 +39,18 @@ export default class ManageService extends Service {
         Days: MoreThan(0),
         UserId: user.Id,
       },
+      order: {
+        EndTime: 'DESC',
+      },
     });
-    const add = card.map((c) => c.Days).reduce((pre, cur) => {
-      return pre + cur;
-    }, 0);
+    // const add = card.map((c) => c.Days).reduce((pre, cur) => {
+    //   return pre + cur;
+    // }, 0);
     // 更新用户月卡
     const userCardPackage = new UserCardPackage();
     const serviceProvider = await this.ctx.service.provider.findOne(body.Provider);
-    userCardPackage.StartTime = moment().add(add, 'days').toDate();
-    userCardPackage.EndTime = moment().add(add + 30, 'days').toDate();
+    userCardPackage.StartTime = moment(card[0]!.EndTime).add(0, 'days').toDate();
+    userCardPackage.EndTime = moment(card[0]!.EndTime).add(31, 'days').toDate();
     userCardPackage.UserId = user.Id;
     userCardPackage.Num = 1;
     userCardPackage.Max = 1;
