@@ -1,5 +1,5 @@
 import {Service} from 'egg';
-import {EntityManager, Equal, LessThan, MoreThan, Repository} from 'typeorm';
+import {EntityManager, LessThan, MoreThan, Repository} from 'typeorm';
 import {OrderCard, OrderCardStatus} from '../entity/order-card';
 import {User} from '../entity/user';
 import {UserCarInfo} from '../entity/user-car-info';
