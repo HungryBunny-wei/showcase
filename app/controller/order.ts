@@ -4,6 +4,7 @@ import {OrderCard, OrderCardStatus} from '../entity/order-card';
 import {OrderInfo, OrderInfoStatus} from '../entity/order-info';
 import {UserCardPackage} from '../entity/user-card-package';
 import {ErrorService} from '../lib/error/error.service';
+import * as moment from 'moment';
 
 export default class CardController extends Controller {
 
@@ -20,6 +21,7 @@ export default class CardController extends Controller {
     orderInfo.UserId = localUser.Id;
     orderInfo.Status = OrderInfoStatus.start;
     Object.assign(orderInfo, this.ctx.request.body);
+    orderInfo.StartTime = moment(moment(orderInfo.StartTime).format('YYYY-MM-DD')).toDate();
     const provider = await this.ctx.service.provider.findOne(orderInfo.ServiceProviderId);
     orderInfo.ServiceProviderName = provider.Name;
     orderInfo.ServiceProviderAddress = provider.Address;
@@ -39,7 +41,10 @@ export default class CardController extends Controller {
     const orderInfoRepo: Repository<OrderInfo> = this.ctx.app.typeorm.getRepository(OrderInfo);
 
     const localUser = this.ctx.locals.user;
-    const orderInfo = await orderInfoRepo.find({where: {ServiceProviderId: localUser.ServiceProviderId}, order: {CreaTime: 'DESC'}});
+    const orderInfo = await orderInfoRepo.find({
+      where: {ServiceProviderId: localUser.ServiceProviderId},
+      order: {CreaTime: 'DESC'}
+    });
     this.ctx.body = {
       success: true,
       obj: orderInfo,
@@ -169,6 +174,22 @@ export default class CardController extends Controller {
     await userCardPackageRepo.save(userCardPackage);
     orderCard.Status = OrderCardStatus.confirm;
     await orderCardRepo.save(orderCard);
+  }
+
+  public async confirm() {
+    await this.ctx.app.typeorm.transaction(async (entityManage) => {
+      const orderInfoRepo = entityManage.getRepository(OrderInfo);
+      const orderInfo = await orderInfoRepo.findOne(this.ctx.request.body.Id);
+      if (!orderInfo) {
+        throw ErrorService.RuntimeErrorNotFind();
+      }
+      orderInfo.Status = OrderInfoStatus.over;
+      await orderInfoRepo.save(orderInfo);
+      this.ctx.body = {
+        success: true,
+        obj: orderInfo,
+      };
+    });
   }
 
 }

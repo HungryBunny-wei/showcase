@@ -19,6 +19,7 @@ export default (app: Application) => {
   router.post('/api/order/save', authUser, userRequired, weapp, app.controller.order.save); // 保存预约信息
   router.post('/api/order/queryById', authUser, userRequired, weapp, app.controller.order.queryById); // 通过订单id查询订单
   router.get('/api/order', authUser, userRequired, weapp, app.controller.order.index); // 查询预约记录
+  router.post('/api/order/confirm', authUser, userRequired, weapp, app.controller.order.confirm); // 查询预约记录
 
   router.post('/api/order/buyCard', authUser, userRequired, weapp, app.controller.order.buyCard); // 提交月卡订单
   router.get('/api/order/card/history', authUser, userRequired, weapp, app.controller.order.orderCardHistory); // 月卡购买记录

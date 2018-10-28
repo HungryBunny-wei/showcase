@@ -66,6 +66,7 @@
   layui.use(['table', 'form', 'layer', 'vip_table', 'laydate'], function () {
     const user = window.meiCar.getUser().user;
     updateUser(user.ServiceProviderId);
+
     function updateUser(providerId) {
       window.meiCar.get('/api/manage/user', { UserType: 'staff', ServiceProviderId: providerId }, (result) => {
         let users = result.obj;
@@ -77,6 +78,7 @@
         $('#StaffId')[0].innerHTML = htmls.join();
       })
     }
+
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -92,8 +94,8 @@
         { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'Status', title: '预约状态', width: 170, templet: '#dataTable_status'}
-        , { field: 'StartTime', title: '预约时间', width: 170,}
+        , { field: 'Status', title: '预约状态', width: 170, templet: '#dataTable_status' }
+        , { field: 'StartTime', title: '预约时间', width: 170, }
         , { field: 'StartTimeSlot', title: '预约时间段', width: 170, }
         , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
@@ -133,23 +135,19 @@
       switch (obj.event) {
         case 'addStaff':
           layer.open({
-            title: '分配服务人员',
-            yes: function (index, layero) {
-              let data = {
-                StaffId: layero.find('#StaffId')[0].value,
-                OverId: obj.data.overId
-              };
-              if (!data.StaffId) {
-                return;
-              }
-              window.meiCar.post('/api/provider/card/addStaff', data, () => {
-                layer.close(index);
+            title: '完成预约',
+            content: '请确认该预约已完成!',
+            btn: ['确定', '取消'],
+            yes: (index, layero) => {
+              window.meiHttp.post('/api/order/confirm', { Id: obj.data.Id }).then(() => {
+                layer.alert('预约完成');
                 tableIns.reload();
-              });
+              })
             },
-            content: $("#layui-form").html()
+            btn2: (index, layero) => {
+              layer.close(index);
+            },
           });
-          form.render();
           break;
       }
     });
