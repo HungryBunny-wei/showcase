@@ -63,7 +63,7 @@
             resolve();
           }
         });
-        window.meiCar.get('/api/manage/user', { StaffFlag: false, Manage: 'none' }, (result) => {
+        window.meiCar.get('/api/manage/user', { StaffFlag: false}, (result) => {
           let users = result.obj;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
           users.forEach((user) => {
