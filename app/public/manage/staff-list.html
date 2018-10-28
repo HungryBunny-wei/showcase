@@ -47,10 +47,10 @@
 <script type="text/javascript">
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    function renderProvider(){
-      return new Promise((resolve, reject)=>{
+    function renderProvider() {
+      return new Promise((resolve, reject) => {
         let index = 0;
-        window.meiHttp.get('/api/manage/provider', {Status: 1}).then((result)=>{
+        window.meiHttp.get('/api/manage/provider', { Status: 1 }).then((result) => {
           let providers = result.obj;
           window.providers = providers;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
@@ -59,11 +59,11 @@
           });
           $('#ServiceProviderId')[0].innerHTML = htmls.join();
           index++;
-          if(index === 2){
+          if (index === 2) {
             resolve();
           }
         });
-        window.meiCar.get('/api/manage/user', { StaffFlag: false}, (result) => {
+        window.meiCar.get('/api/manage/user', { StaffFlag: false }, (result) => {
           let users = result.obj;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
           users.forEach((user) => {
@@ -71,12 +71,13 @@
           });
           $('#UserId')[0].innerHTML = htmls.join();
           index++;
-          if(index === 2){
+          if (index === 2) {
             resolve();
           }
         });
       });
     }
+
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -102,7 +103,7 @@
       , url: '/api/manage/user'
       , method: 'get'
       , headers: window.meiCar.getPostHeader()
-      , where: { UserType: 'staff' }
+      , where: { StaffFlag: true }
       , parseData: function (res) { //res 即为原始返回的数据
         return {
           "code": res.success ? 0 : res.code, //解析接口状态
@@ -156,7 +157,7 @@
     });
     // 点击添加按钮(弹窗)
     $('#btn-add').on('click', function () {
-      renderProvider().then(()=>{
+      renderProvider().then(() => {
         layer.open({
           title: '添加服务人员',
           area: ['650px', '450px'],
