@@ -324,7 +324,7 @@ export default class UserService extends Service {
     const userCardPackage = await userCardPackageRepo.find({
       where: {
         UserId: userId,
-        StartTime: Equal(LessThan(moment().toDate())),
+        StartTime: LessThan(moment().toDate()),
         EndTime: MoreThan(moment().toDate()),
       },
     });
