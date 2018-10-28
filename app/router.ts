@@ -16,7 +16,6 @@ export default (app: Application) => {
   router.get('/api/user/card/lookOver', authUser, userRequired, weapp, app.controller.user.cardLookOver); // 查看月卡订单完成情况
   router.post('/api/user/card/confirm', authUser, userRequired, weapp, app.controller.user.cardConfirm); // 确认月卡完成
 
-
   router.post('/api/order/save', authUser, userRequired, weapp, app.controller.order.save); // 保存预约信息
   router.post('/api/order/queryById', authUser, userRequired, weapp, app.controller.order.queryById); // 通过订单id查询订单
   router.get('/api/order', authUser, userRequired, weapp, app.controller.order.index); // 查询预约记录

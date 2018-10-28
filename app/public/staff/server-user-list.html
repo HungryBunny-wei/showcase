@@ -158,6 +158,11 @@
           });
           form.render();
           break;
+        case 'look':
+          window.meiHttp.post('/api/provider/card/lookOver', {Id:obj.data.UserId,date:tableIns.config.where.date}).then((result)=>{
+            console.log(result);
+          });
+          break;
       }
     });
 
@@ -174,7 +179,6 @@
         return;
       }
       window.meiCar.userAddManage(data, () => {
-        // layer.close(index);
         tableIns.reload();
       });
     });
@@ -192,8 +196,10 @@
 </script>
 <!-- 表格操作按钮集 -->
 <script type="text/html" id="barOption">
-    {{# if(d.cardOverStatus === '-1'){ }}
-    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addStaff">服务完成</button>
+    {{# if(d.cardOverStatus === '-1' && !d.StaffId){ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addStaff">分配人员</button>
+    {{# } else { }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="look">查看详情</button>
     {{# } }}
 </script>
 <script type="text/html" id="dataTable_cardOverStatus">
