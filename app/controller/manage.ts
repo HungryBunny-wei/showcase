@@ -54,9 +54,6 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     const body = this.ctx.request.body;
     const serviceProvider = new ServiceProvider();
     serviceProvider.Address = body.Address;
-    // serviceProvider.AddressName = body.AddressName;
-    // serviceProvider.Latitude = body.Latitude;
-    // serviceProvider.Longitude = body.Longitude;
     serviceProvider.Name = body.Name;
     serviceProvider.Phone = body.Phone;
     serviceProvider.UserId = body.UserId;
@@ -68,21 +65,21 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     };
   }
 
-  public async providerConfirm() {
-    const body = this.ctx.request.body;
-    this.ctx.body = {
-      success: true,
-      obj: await this.ctx.service.manage.providerConfirm(body.Id),
-    };
-  }
+  // public async providerConfirm() {
+  //   const body = this.ctx.request.body;
+  //   this.ctx.body = {
+  //     success: true,
+  //     obj: await this.ctx.service.manage.providerConfirm(body.Id),
+  //   };
+  // }
 
-  public async providerRefuse() {
-    const body = this.ctx.request.body;
-    this.ctx.body = {
-      success: true,
-      obj: await this.ctx.service.manage.providerRefuse(body.Id),
-    };
-  }
+  // public async providerRefuse() {
+  //   const body = this.ctx.request.body;
+  //   this.ctx.body = {
+  //     success: true,
+  //     obj: await this.ctx.service.manage.providerRefuse(body.Id),
+  //   };
+  // }
 
   public async providerDel() {
     const body = this.ctx.request.body;
@@ -107,6 +104,8 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     user.UserType = 'user';
     user.Manage = 'none';
     user.register = true;
+    user.StaffFlag = false;
+    user.ServerFlag = false;
     await this.ctx.app.typeorm.getRepository(User).save(user);
     this.ctx.body = {
       success: true,
@@ -201,6 +200,7 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
   public async staffAdd() {
     const user = await this.ctx.service.user.findOne(this.ctx.request.body.UserId);
     user.UserType = 'staff';
+    user.StaffFlag = true;
     user.ServiceProviderId = this.ctx.request.body.ServiceProviderId;
     await this.ctx.app.typeorm.getRepository(User).save(user);
     this.ctx.body = {
@@ -213,6 +213,7 @@ ${this.ctx.query.Status ? 'where provider.Status = ?' : ''}
     const user = await this.ctx.service.user.findOne(this.ctx.request.body.UserId);
     user.UserType = 'user';
     user.ServiceProviderId = null as any;
+    user.StaffFlag = false;
     await this.ctx.app.typeorm.getRepository(User).save(user);
     this.ctx.body = {
       success: true,

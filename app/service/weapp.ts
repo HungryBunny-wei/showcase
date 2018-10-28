@@ -123,21 +123,20 @@ export default class WeappService extends Service {
    * 月卡到期提醒
    * @param card
    */
-  public async sendCardEndTime(cardList: UserCardPackage[]) {
-    for (const card of cardList) {
-      const user = await this.ctx.service.user.findOne(card.UserId);
+  public async sendCardEndTime(userList: User[]) {
+    for (const user of userList) {
       await this.sendTemplate(user, {
         page: this.config.weappSDK.sendCardEndTime.page,
         template_id: this.config.weappSDK.sendCardEndTime.template_id,
         data: {
           keyword1: {
-            value: card.Title,
+            value: user.CardTitle,
           },
           keyword2: {
-            value: moment(card.EndTime).format('YYYY-MM-DD'),
+            value: moment(user.CardEndTime),
           },
           keyword3: {
-            value: card.Days + '天',
+            value: user.CardEndTime + '天',
           },
           keyword4: {
             value: this.config.weappSDK.sendCardEndTime.message,

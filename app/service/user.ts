@@ -78,10 +78,12 @@ export default class UserService extends Service {
       });
       if (!user) {
         user = new User();
+        user.Manage = 'none';
+        user.UserType = 'user';
+        user.StaffFlag = false;
+        user.ServerFlag = false;
       }
       user.Name = body.Name;
-      user.UserType = user.UserType || 'user';
-      user.Manage = user.Manage || 'none';
       user.Phone = body.Phone;
       user.OpenId = weappSession.OpenId;
       user.NickName = body.NickName;

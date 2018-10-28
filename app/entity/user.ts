@@ -16,6 +16,12 @@ export class User extends Base {
   @Column()
   UserType: 'user' | 'service' | 'staff';
 
+  @Column('tinyint')
+  StaffFlag: boolean; // 是服务员
+
+  @Column('tinyint')
+  ServerFlag: boolean; // 是服务商
+
   @Column({type: 'int', nullable: true})
   ServiceProviderId: number;
 
@@ -39,4 +45,14 @@ export class User extends Base {
 
   @Column('tinyint', {nullable: true})
   register: boolean;
+
+  @Column({nullable: true})
+  CardTitle: string;
+  @Column('datetime', {nullable: true})
+  CardStartTime: Date;
+  @Column('datetime', {nullable: true})
+  CardEndTime: Date;
+  @Column('int', {nullable: true})
+  CardDays: number;
+
 }

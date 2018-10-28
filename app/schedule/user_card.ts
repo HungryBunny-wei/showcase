@@ -4,6 +4,7 @@ import {UserCardPackage} from '../entity/user-card-package';
 
 import * as moment from 'moment';
 import {OrderCardOver, OrderCardOverStatus} from '../entity/order-card-over';
+import {User} from '../entity/user';
 
 export default class UpdateCache extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
@@ -21,28 +22,42 @@ export default class UpdateCache extends Subscription {
     try {
       const userCardPackageRepo = this.ctx.app.typeorm.getRepository(UserCardPackage);
       const orderCardOverRepo = this.ctx.app.typeorm.getRepository(OrderCardOver);
+      const userRepo = this.ctx.app.typeorm.getRepository(User);
       // const orderCardOverList: OrderCardOver[] = []; // 生成的订单
-      const userCardPackageList: UserCardPackage[] = []; // 通知的月卡
+      const userCardPackageList: User[] = []; // 通知的月卡
       // 查询有效的月卡
-      const userCardPackage = await userCardPackageRepo.find({
+      const userList = await userRepo.find({
         where: {
-          StartTime: LessThan(moment().add('days', 1).format('YYYY-MM-DD')),
-          Days: MoreThan(0),
+          CardStartTime: LessThan(moment().add(1, 'days').format('YYYY-MM-DD')),
+          CardDays: MoreThan(0),
+        },
+        order: {
+          CardStartTime: 'ASC',
         },
       });
-      for (const _userCardPackage of userCardPackage) {
+      const userCardPackage = await userCardPackageRepo.find({
+        where: {
+          StartTime: LessThan(moment().add(1, 'days').format('YYYY-MM-DD')),
+          Days: MoreThan(0),
+        },
+        order: {
+          EndTime: 'ASC',
+        },
+      });
+      for (const user of userList) {
+        const index = user.CardDays;
+        // 计算剩余天数
+        user.CardDays = moment(user.CardEndTime).diff(moment(), 'days');
         // 如果天数为3消息提示
-        if (_userCardPackage.Days === 3 || _userCardPackage.Days === 1) {
-          userCardPackageList.push(_userCardPackage);
+        if (index !== user.CardDays && (user.CardDays === 3 || user.CardDays === 1)) {
+          userCardPackageList.push(user);
+          await userRepo.save(user);
         }
+      }
+      for (const _userCardPackage of userCardPackage) {
+        const index = _userCardPackage.Days;
         // 天数大于0就生成订单完成记录
         if (_userCardPackage.Days > 0) {
-          const _orderCardOver = new OrderCardOver();
-          _orderCardOver.Status = OrderCardOverStatus.noStart;
-          _orderCardOver.UserCardPackageId = _userCardPackage.Id;
-          _orderCardOver.UserId = _userCardPackage.UserId;
-          _orderCardOver.ServiceProviderId = _userCardPackage.ServiceProviderId;
-          _orderCardOver.ServiceProviderName = _userCardPackage.ServiceProviderName;
           const noSave = await orderCardOverRepo.findOne({
             where: {
               UserId: _userCardPackage.UserId,
@@ -51,15 +66,22 @@ export default class UpdateCache extends Subscription {
             },
           });
           if (!noSave) {
+            const _orderCardOver = new OrderCardOver();
+            _orderCardOver.Status = OrderCardOverStatus.noStart;
+            _orderCardOver.UserCardPackageId = _userCardPackage.Id;
+            _orderCardOver.UserId = _userCardPackage.UserId;
+            _orderCardOver.ServiceProviderId = _userCardPackage.ServiceProviderId;
+            _orderCardOver.ServiceProviderName = _userCardPackage.ServiceProviderName;
             await orderCardOverRepo.save(_orderCardOver);
           }
         }
         // 计算剩余天数
         _userCardPackage.Days = moment(_userCardPackage.EndTime).diff(moment(), 'days');
+        if (index !== _userCardPackage.Days) {
+          await userCardPackageRepo.save(userCardPackage);
+        }
       }
       await ctx.service.weapp.sendCardEndTime(userCardPackageList);
-      // await orderCardOverRepo.save(orderCardOverList);
-      await userCardPackageRepo.save(userCardPackage);
     } catch (e) {
       await ctx.service.weapp.sendError(e);
     }

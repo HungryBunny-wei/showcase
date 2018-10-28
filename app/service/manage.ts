@@ -43,16 +43,22 @@ export default class ManageService extends Service {
         EndTime: 'DESC',
       },
     });
-    // const add = card.map((c) => c.Days).reduce((pre, cur) => {
-    //   return pre + cur;
-    // }, 0);
+    if (card.length === 0) {
+      user.CardTitle = orderCard.Title;
+      user.CardStartTime = moment().add(0, 'days').toDate();
+      user.CardEndTime = moment().add(31, 'days').toDate();
+      user.CardDays = 30;
+    } else {
+      user.CardDays += 30;
+      user.CardEndTime = moment(user.CardEndTime).add(31, 'days').toDate();
+    }
     // 更新用户月卡
     const userCardPackage = new UserCardPackage();
     const serviceProvider = await this.ctx.service.provider.findOne(body.Provider);
     this.ctx.logger.info(moment(card[0]!.EndTime));
     this.ctx.logger.info(card[0]!.EndTime);
-    userCardPackage.StartTime = moment(card[0]!.EndTime).add(0, 'days').toDate();
-    userCardPackage.EndTime = moment(card[0]!.EndTime).add(31, 'days').toDate();
+    userCardPackage.StartTime = moment(user.CardEndTime).add(-31, 'days').toDate();
+    userCardPackage.EndTime = user.CardEndTime;
     userCardPackage.UserId = user.Id;
     userCardPackage.Num = 1;
     userCardPackage.Max = 1;
@@ -71,6 +77,7 @@ export default class ManageService extends Service {
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       await transactionalEntityManager.save(userCardPackage);
       await transactionalEntityManager.save(orderCard);
+      await transactionalEntityManager.save(user);
     });
     await this.service.weapp.sendCardConfirm(user, userCardPackage); // 发送消息
     return userCardPackage;
@@ -86,6 +93,7 @@ export default class ManageService extends Service {
       await providerRepo.save(provider);
       user.UserType = 'service';
       user.ServiceProviderId = provider.Id;
+      user.ServerFlag = true;
       await userRepo.save(user);
     });
 
@@ -145,6 +153,7 @@ export default class ManageService extends Service {
 
       user.UserType = 'user';
       user.ServiceProviderId = -1;
+      user.ServerFlag = false;
       await providerRepo.save(serviceProvider);
       await userRepo.save(user);
 
