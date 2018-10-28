@@ -324,8 +324,8 @@ export default class UserService extends Service {
     const userCardPackage = await userCardPackageRepo.find({
       where: {
         UserId: userId,
-        StartTime: Equal(LessThan(moment().format('YYYY-MM-DD'))),
-        EndTime: MoreThan(moment().add('days', 1).format('YYYY-MM-DD')),
+        StartTime: Equal(LessThan(moment())),
+        EndTime: MoreThan(moment().add(1, 'days')),
       },
     });
     if (userCardPackage.length > 1) {

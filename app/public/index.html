@@ -157,20 +157,21 @@
       // vipNav.main('./json/nav_main.json', 'side-main', true);
 
 
-      if (user.Manage === 'manage') {
-        user.Manage = 'admin';
-      }
-      if (user.UserType === 'service' && user.Manage === 'manage') {
-        vipNav.main('./json/service_and_manage.json', 'side-main', true);
-      } else if (user.UserType === 'service' && user.Manage === 'admin') {
-        vipNav.main('./json/service_and_admin.json', 'side-main', true);
-      } else if (user.UserType === 'service' || user.UserType === 'staff') {
-        vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
-      } else if (user.Manage === 'admin' || user.Manage === 'manage') {
-        vipNav.main(`./json/${user.Manage}_menu.json`, 'side-main', true);
-      } else if (user.UserType === 'staff') {
-        vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
-      }
+      // if (user.Manage === 'manage') {
+      //   user.Manage = 'admin';
+      // }
+      // if (user.UserType === 'service' && user.Manage === 'manage') {
+      //   vipNav.main('./json/service_and_manage.json', 'side-main', true);
+      // } else if (user.UserType === 'service' && user.Manage === 'admin') {
+      //   vipNav.main('./json/service_and_admin.json', 'side-main', true);
+      // } else if (user.UserType === 'service' || user.UserType === 'staff') {
+      //   vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
+      // } else if (user.Manage === 'admin' || user.Manage === 'manage') {
+      //   vipNav.main(`./json/${user.Manage}_menu.json`, 'side-main', true);
+      // } else if (user.UserType === 'staff') {
+      //   vipNav.main(`./json/${user.UserType}_menu.json`, 'side-main', true);
+      // }
+      vipNav.main(`/api/getMenu`, 'side-main', true);
 
     });
   });
