@@ -49,6 +49,8 @@ export default class ManageService extends Service {
     // 更新用户月卡
     const userCardPackage = new UserCardPackage();
     const serviceProvider = await this.ctx.service.provider.findOne(body.Provider);
+    this.ctx.logger.info(moment(card[0]!.EndTime));
+    this.ctx.logger.info(card[0]!.EndTime);
     userCardPackage.StartTime = moment(card[0]!.EndTime).add(0, 'days').toDate();
     userCardPackage.EndTime = moment(card[0]!.EndTime).add(31, 'days').toDate();
     userCardPackage.UserId = user.Id;
