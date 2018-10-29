@@ -15,6 +15,7 @@
   "user.auth.headerNot(X-WX-Skey)": "请求头X-WX-Skey错误",
   "user.auth.X-WX-SkeyNotEQBravo": "请求头X-WX-Skey只支持bravo",
   "card.enable.card": "启用中月卡数量多与2",
+  "provider.del.card": "还有服务中的月卡不能删除供应商",
   "order.notCard": "没有月卡",
   "jscode.request.statusError": "微信jscode请求状态码不正确",
   "jscode.request.failed": "微信jscode请求失败",

@@ -144,9 +144,14 @@ export default class ManageService extends Service {
     let user: User;
     await this.ctx.app.typeorm.transaction(async (transactionalEntityManager: EntityManager) => {
       const providerRepo: Repository<ServiceProvider> = transactionalEntityManager.getRepository(ServiceProvider);
+      const userCardRepo: Repository<UserCardPackage> = transactionalEntityManager.getRepository(UserCardPackage);
       const userRepo: Repository<User> = transactionalEntityManager.getRepository(User);
       serviceProvider = await this.ctx.service.provider.findOne(id);
       user = await this.ctx.service.user.findOne(serviceProvider.UserId);
+      const cardList = await userCardRepo.find({ServiceProviderId: serviceProvider.Id, Days: MoreThan(0)});
+      if (cardList.length > 0) {
+        ErrorService.RuntimeError('provider.del.card');
+      }
       serviceProvider.Status = ServiceProviderStatus.del;
 
       user.UserType = 'user';
