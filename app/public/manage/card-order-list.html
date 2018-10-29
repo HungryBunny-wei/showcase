@@ -40,9 +40,9 @@
 
   // layui方法
   layui.use(['table', 'form', 'layer', 'vip_table'], function () {
-    function renderProvider(){
-      return new Promise((resolve, reject)=>{
-        window.meiCar.get('/api/manage/provider', {}, (result) => {
+    function renderProvider() {
+      return new Promise((resolve, reject) => {
+        window.meiCar.get('/api/manage/provider', { Status: 1 }, (result) => {
           let providers = result.obj;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
           providers.forEach((provider) => {
@@ -53,6 +53,7 @@
         });
       });
     }
+
     // 操作对象
     var form = layui.form
       , table = layui.table
@@ -70,8 +71,8 @@
         , { field: 'Title', title: '月卡类型', width: 170, }
         , { field: 'Address', title: '车辆地址', width: 170, }
         , { field: 'Status', title: '状态', width: 80, templet: '#dataTable_status' }
-        , { field: 'ServiceProviderName', title: '服务商名称', width: 170,}
-        , { field: 'ServiceProviderAddress', title: '服务商地址', width: 170,}
+        , { field: 'ServiceProviderName', title: '服务商名称', width: 170, }
+        , { field: 'ServiceProviderAddress', title: '服务商地址', width: 170, }
         , { field: 'CreaTime', title: '申请时间', width: 170 }
         , { field: 'ConfirmTime', title: '确认时间', width: 170 }
         , { fixed: 'right', title: '操作', width: 120, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
@@ -99,14 +100,14 @@
     table.on('tool(dataTable)', function (obj) {
       switch (obj.event) {
         case 'confirm':
-          renderProvider().then(()=>{
+          renderProvider().then(() => {
             layer.open({
               title: '确认订单',
               btn: ['确定', '取消'],
               area: ['650px', '450px'],
               yes: (index, layero) => {
                 let data = {
-                  Id:obj.data.Id,
+                  Id: obj.data.Id,
                   Provider: layero.find('#ServiceProviderId')[0].value,
                 };
                 if (!data.Id || !data.Provider) {
