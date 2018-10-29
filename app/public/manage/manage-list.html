@@ -88,7 +88,7 @@
       let users = result.obj;
       let htmls = [`<option value="">请选择用户添加到管理员</option>`];
       users.forEach((user) => {
-        if (user.Manage === 'admin' || user.Manage === 'manage' || user.UserType === 'staff') {
+        if (user.Manage === 'admin' || user.Manage === 'manage') {
           return;
         }
         htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
