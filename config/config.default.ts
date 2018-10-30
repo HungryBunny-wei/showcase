@@ -8,13 +8,12 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1536946665193_6387';
   config.redis = {
     client: {
-      host: '120.77.240.193',
+      host: '47.105.84.128',
       port: '6379',
-      password: '',
+      password: 'rabbit-redis',
       db: '0',
     },
   };
-
   config.middleware = ['locals'];
 
   config.weappSDK = {

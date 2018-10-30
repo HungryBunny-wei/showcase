@@ -49,9 +49,11 @@ export default class UpdateCache extends Subscription {
         // 计算剩余天数
         user.CardDays = moment(user.CardEndTime).diff(moment(), 'days');
         // 如果天数为3消息提示
-        if (index !== user.CardDays && (user.CardDays === 3 || user.CardDays === 1)) {
-          userCardPackageList.push(user);
+        if (index !== user.CardDays) {
           await userRepo.save(user);
+          if (user.CardDays === 3 || user.CardDays === 1) {
+            userCardPackageList.push(user);
+          }
         }
       }
       for (const _userCardPackage of userCardPackage) {

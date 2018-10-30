@@ -170,9 +170,26 @@ export default class ManageService extends Service {
    */
   public async userIndex(param) {
     const userRepo: Repository<User> = this.ctx.app.typeorm.getRepository(User);
-    return await userRepo.find({
+    const providerRepo: Repository<ServiceProvider> = this.ctx.app.typeorm.getRepository(ServiceProvider);
+    const providerList = await providerRepo.find();
+    const providerMap: Map<number, ServiceProvider> = new Map();
+    providerList.forEach((provider) => {
+      providerMap.set(provider.Id, provider);
+    })
+    const resultList = await userRepo.find({
       where: param,
     });
+    resultList.forEach((result: any) => {
+      const provider = providerMap.get(result.ServiceProviderId);
+      if (provider) {
+        result.ServiceProviderName = provider.Name;
+        result.ServiceProviderAddress = provider.Address;
+      } else {
+        result.ServiceProviderAddress = '没有找到供应商!';
+        result.ServiceProviderName = '没有找到供应商!';
+      }
+    })
+    return resultList;
   }
 
   /**

@@ -52,7 +52,6 @@
         let index = 0;
         window.meiHttp.get('/api/manage/provider', { Status: 1 }).then((result) => {
           let providers = result.obj;
-          window.providers = providers;
           let htmls = [`<option value="">请选择或输入搜索</option>`];
           providers.forEach((provider) => {
             htmls.push(`<option value="${provider.Id}">${provider.Name}</option>`)
@@ -92,12 +91,12 @@
         { field: 'Id', title: 'ID', width: 80, fixed: 'left' }
         , { field: 'Phone', title: '手机号', width: 120 }
         , { field: 'Name', title: '用户名', width: 120 }
-        , { field: 'provider', title: '所属服务商', width: 120, templet: '#dataTable_provider' }
-        , { field: 'OpenId', title: 'OpenID', width: 120, }
-        , { field: 'NickName', title: '微信昵称', width: 120, }
+        , { field: 'ServiceProviderName', title: '所属服务商', width: 170 },
+        , { field: 'ServiceProviderAddress', title: '所属服务商', width: 170 },
+        // , { field: 'NickName', title: '微信昵称', width: 170, }
         , { field: 'LoginTime', title: '最后登录时间', width: 170 }
         , { field: 'CreaTime', title: '创建时间', width: 170 }
-        , { fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
+        , { fixed: 'right', title: '操作', width: 170, align: 'center', toolbar: '#barOption' } //这里的toolbar值是模板元素的选择器
       ]]
       , id: 'dataCheck'
       , url: '/api/manage/user'
