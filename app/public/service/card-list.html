@@ -36,7 +36,7 @@
 <!-- 表格 -->
 <table id="dataTable" lay-filter="dataTable"></table>
 
-<!--新增管理员-->
+<!--添加服务人员-->
 <div id="layui-form" style="display: none;">
     <form class="layui-form" action="">
         <div class="layui-form-item">
@@ -44,6 +44,42 @@
             <div class="layui-input-block">
                 <select id="StaffId" name="StaffId" lay-verify="required" lay-search>
                 </select>
+            </div>
+        </div>
+    </form>
+</div>
+<!--查看详情-->
+<div id="layui-form-detail" style="display: none;">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input id="Status" type="text" autocomplete="off" class="layui-input" readonly >
+            </div>
+        </div>
+        <blockquote class="layui-elem-quote">月卡详情</blockquote>
+        <div class="layui-form-item">
+            <label class="layui-form-label">月卡类型</label>
+            <div class="layui-input-block">
+                <input id="Title" type="text" autocomplete="off" class="layui-input" readonly >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">服务地点</label>
+            <div class="layui-input-block">
+                <input id="Address" type="text" autocomplete="off" class="layui-input" readonly >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">月卡剩余天数</label>
+            <div class="layui-input-block">
+                <input id="Days" type="text" autocomplete="off" class="layui-input" readonly >
+            </div>
+        </div>
+        <blockquote class="layui-elem-quote">服务图片</blockquote>
+        <div class="layui-carousel" id="test1">
+            <div id="carousel-item">
+            <!--<div carousel-item id="carousel-item">-->
             </div>
         </div>
     </form>
@@ -70,27 +106,37 @@
     return fmt;
   }
   // layui方法
-  layui.use(['table', 'form', 'layer', 'vip_table', 'laydate'], function () {
-    const user = window.meiCar.getUser().user;
-    updateUser(user.ServiceProviderId);
-    function updateUser(providerId) {
-      window.meiCar.get('/api/manage/user', { UserType: 'staff', ServiceProviderId: providerId }, (result) => {
-        let users = result.obj;
-        let htmls = [`<option value="">请选择或输入搜索</option>`];
-        users.forEach((user) => {
-          htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
-        });
-        console.log($('#StaffId'));
-        $('#StaffId')[0].innerHTML = htmls.join();
+  layui.use(['table', 'form', 'layer', 'vip_table', 'laydate', 'carousel'], function () {
+
+    function renderUser() {
+      const user = window.meiCar.getUser().user;
+      return new Promise((resolve) => {
+        window.meiHttp.get('/api/manage/user', {
+          StaffFlag: 1,
+          ServiceProviderId: user.ServiceProviderId
+        }).then((result) => {
+          let users = result.obj;
+          let htmls = [`<option value="">请选择或输入搜索</option>`];
+          users.forEach((user) => {
+            htmls.push(`<option value="${user.Id}">${user.Name}</option>`)
+          });
+          console.log($('#StaffId'));
+          $('#StaffId')[0].innerHTML = htmls.join();
+          resolve();
+        })
       })
     }
+
     // 操作对象
     var form = layui.form
       , table = layui.table
       , layer = layui.layer
       , vipTable = layui.vip_table
       , $ = layui.jquery
+      , carousel = layui.carousel
       , laydate = layui.laydate;
+
+
     // 表格渲染
     var tableIns = table.render({
       elem: '#dataTable'                  //指定原始表格元素选择器（推荐id选择器）
@@ -136,33 +182,89 @@
       }
     });
 
+    function getStatus(d) {
+      if (d.Status === '-1' && !d.StaffId) {
+        return '未分配';
+      } else if (d.Status === '-1') {
+        return '待服务';
+      } else if (d.Status === '0') {
+        return '待评价';
+      } else if (d.Status === '1') {
+        return '已完成';
+      }
+    }
+
     table.on('tool(dataTable)', function (obj) {
-      console.log(obj);
       switch (obj.event) {
         case 'addStaff':
-          layer.open({
-            title: '分配服务人员',
-            area: ['650px', '450px'],
-            yes: function (index, layero) {
-              let data = {
-                StaffId: layero.find('#StaffId')[0].value,
-                OverId: obj.data.overId
-              };
-              if (!data.StaffId) {
-                return;
-              }
-              window.meiCar.post('/api/provider/card/addStaff', data, () => {
-                layer.close(index);
-                tableIns.reload();
-              });
-            },
-            content: $("#layui-form").html()
+          renderUser().then(() => {
+            layer.open({
+              title: '分配服务人员',
+              area: ['650px', '450px'],
+              yes: function (index, layero) {
+                let data = {
+                  StaffId: layero.find('#StaffId')[0].value,
+                  OverId: obj.data.overId
+                };
+                if (!data.StaffId) {
+                  return;
+                }
+                window.meiCar.post('/api/provider/card/addStaff', data, () => {
+                  layer.close(index);
+                  tableIns.reload();
+                });
+              },
+              content: $("#layui-form").html()
+            });
+            form.render();
           });
-          form.render();
           break;
         case 'look':
-          window.meiHttp.post('/api/provider/card/lookOver', {Id:obj.data.UserId,date:tableIns.config.where.date}).then((result)=>{
-            console.log(result);
+          window.meiHttp.post('/api/provider/card/lookOver', {
+            Id: obj.data.UserId,
+            date: tableIns.config.where.date
+          }).then((result) => {
+            const obj = result.obj;
+            if(obj.orderCardOver.uid){
+              const imgs = obj.orderCardOver.uid.split(';');
+              $('#carousel-item').html(imgs.map((src)=>{
+                return `
+                <div>
+                   <img src="/api/gen/getFile?uid=${src}">
+              </div>
+                `
+              }));
+            }
+            // $('#carousel-item').html(`
+            // <div><img src="/public/frame/layui_bak/images/face/0.gif"></div>
+            // <div><img src="/public/frame/layui_bak/images/face/0.gif"></div>
+            // <div><img src="/public/frame/layui_bak/images/face/0.gif"></div>
+            // `);
+            // carousel.render({
+            //   elem: '#test1'
+            //   ,width: '100%' //设置容器宽度
+            //   ,arrow: 'always' //始终显示箭头
+            // });
+            setTimeout(()=>{
+              layer.open({
+                title: '查询详情',
+                area: ['650px', '600px'],
+                yes: function (index, layero) {
+                },
+                success: function (layero, index) {
+                  layero.find('#Status')[0].value = getStatus(obj.orderCardOver);
+                  layero.find('#Title')[0].value = obj.userCardPack.Title;
+                  layero.find('#Address')[0].value = obj.usercar.Address;
+                  layero.find('#Days')[0].value = obj.user.CardDays;
+                  // carousel.render({
+                  //   elem: layero.find('#test1')
+                  //   ,width: '100%' //设置容器宽度
+                  //   ,arrow: 'always' //始终显示箭头
+                  // });
+                },
+                content: $("#layui-form-detail").html()
+              });
+            })
           });
           break;
       }
