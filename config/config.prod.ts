@@ -36,7 +36,7 @@ export default () => {
     client: {
       host: '127.0.0.1',
       port: '6389',
-      password: 'zAKYFwpi8E3hHcin',
+      password: '',
       db: '0',
     },
   };
