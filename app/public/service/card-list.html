@@ -178,7 +178,8 @@
       type: 'date',
       max: new Date().Format('YYYY-MM-DD'),
       done: function (value, date, endDate) {
-        tableIns.config.where.date = value
+        tableIns.config.where.date = value;
+        tableIns.reload();
       }
     });
 
