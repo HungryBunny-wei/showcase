@@ -32,6 +32,14 @@ export default () => {
       subscribersDir: 'app/subscriber',
     },
   };
+  config.redis = {
+    client: {
+      host: '127.0.0.1',
+      port: '6389',
+      password: 'zAKYFwpi8E3hHcin',
+      db: '0',
+    },
+  };
   config.logger = {
     dir: path.join(__dirname, '../logs/prod'),
   };

@@ -13,6 +13,11 @@ export default function localsMiddleware() {
     };
     try {
       await next();
+
+      ctx.logger.info('头部');
+      ctx.logger.info(ctx.request.headers);
+      ctx.logger.info('响应');
+      ctx.logger.info(ctx.response.headers);
       if (ctx.locals.user) {
         const user = ctx.locals.user;
         ctx.logger.info(`[${user.Name}][${user.Id}]`);
